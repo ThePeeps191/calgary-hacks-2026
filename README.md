@@ -37,7 +37,7 @@ When activated, you should see `(venv)` in your terminal.
 
 ---
 
-### 3. Install dependencies  been created by Danny)*
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
