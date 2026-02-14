@@ -1,7 +1,9 @@
-from newspaper import Article
+import newspaper
+
+print("newspaper has been imported.")
 
 def get_content(url):
-    article = Article(url)
+    article = newspaper.article(url)
     article.download()
     article.parse()
 
@@ -26,3 +28,7 @@ def get_content(url):
     }
 
     return content_dict
+
+if __name__ == "__main__":
+    content_dict = get_content("https://www.ctvnews.ca/calgary/article/in-court-charge-stayed-for-one-of-three-accused-of-bilking-bowness-non-profit/")
+    print(content_dict)
