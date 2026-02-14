@@ -1,5 +1,8 @@
 BIAS_SCORE_CUTOFF = 10.0
 
+def segment_paragraphs(text):
+    return
+
 def get_bias_score(text):
     return 0.0
 
