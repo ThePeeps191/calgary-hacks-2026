@@ -33,5 +33,5 @@ def get_content(url):
     return content_dict
 
 if __name__ == "__main__":
-    content_dict = get_content("https://edition.cnn.com/2023/10/29/sport/nfl-week-8-how-to-watch-spt-intl/index.html")
-    print(content_dict)
+    content_dict = get_content("https://www.cnn.com/2026/02/14/politics/former-federal-workers-doge-cuts")
+    print(content_dict['text'])
