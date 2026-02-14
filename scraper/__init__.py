@@ -1,5 +1,5 @@
 from newspaper import Article
 
-from get_content import get_content
+from .get_content import get_content
 
-__all__ = [get_content]
+__all__ = ["get_content"]
