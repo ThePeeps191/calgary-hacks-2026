@@ -1,7 +1,24 @@
 BIAS_SCORE_CUTOFF = 10.0
 
 def segment_paragraphs(text):
-    return
+    """
+    Segments article text into Paragraph objects.
+    Splits by newlines (paragraph breaks).
+    """
+    paragraphs = []
+    
+    # Split by double newlines to get paragraphs
+    raw_paragraphs = text.split('\n')
+    
+    for para_text in raw_paragraphs:
+        # Strip whitespace from each paragraph
+        para_text = para_text.strip()
+        
+        # Skip empty paragraphs
+        if para_text:
+            paragraphs.append(Paragraph(para_text))
+    
+    return paragraphs
 
 def get_bias_score(text):
     return 0.0
