@@ -152,7 +152,7 @@ def fetch_video():
                 reasons.append(para.reason_biased)
 
         try:
-            bias_score = mget_drama_index(text)
+            bias_score = get_drama_index(text)
         except Exception:
             bias_score = None
 
