@@ -471,6 +471,42 @@ function App() {
             </div>
           )}
 
+          {/* Paragraph-level Bias Analysis */}
+          {result.paragraphs?.length > 0 && (
+            <div className="sf-card">
+              <h3 className="sf-card-label">Paragraph Analysis</h3>
+              <div className="sf-paragraphs">
+                {result.paragraphs.map((para, i) => (
+                  <motion.div
+                    key={i}
+                    className={`sf-para ${para.bias_score ? "sf-para-biased" : "sf-para-clean"}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                  >
+                    <p className="sf-para-text">{para.text}</p>
+                    {para.bias_score && (
+                      <div className="sf-para-details">
+                        {para.unbiased_replacement && (
+                          <div className="sf-para-replacement">
+                            <span className="sf-para-tag">Unbiased version:</span>
+                            <p>{para.unbiased_replacement}</p>
+                          </div>
+                        )}
+                        {para.reason_biased && (
+                          <div className="sf-para-reason">
+                            <span className="sf-para-tag">Why it's biased:</span>
+                            <p>{para.reason_biased}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Keywords */}
           {result.keywords?.length > 0 && (
             <div className="sf-card">
