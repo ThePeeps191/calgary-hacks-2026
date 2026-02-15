@@ -198,6 +198,33 @@ def fetch_video():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app.route("/search-similar", methods=["POST"])
+def search_similar():
+    data = request.get_json()
+    query = data.get("query")
+    url = data.get("url")
+
+    if not query:
+        return jsonify({
+            "status": "error",
+            "message": "Query not provided"
+        }), 400
+
+    try:
+        if url:
+            articles = scraper.search_urls(query, url)
+        else:
+            articles = scraper.search_urls(query)
+        return jsonify({
+            "status": "ok",
+            "data": articles
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
 @app.route("/get-drama-index", methods=["POST"])
 def get_drama_index_route():
     data = request.get_json()
