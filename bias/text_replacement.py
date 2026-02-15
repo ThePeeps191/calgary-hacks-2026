@@ -3,7 +3,7 @@ from .bias_correction import correct_bias
 
 def segment_paragraphs(text):
     """
-    Segments article text into Paragraph objects.
+    Segments article text into Paragraph objects, then tests each for bias.
     Splits by newlines (paragraph breaks).
     """
     paragraphs = []
@@ -17,7 +17,9 @@ def segment_paragraphs(text):
         
         # Skip empty paragraphs
         if para_text:
-            paragraphs.append(Paragraph(para_text))
+            paragraph = Paragraph(para_text)
+            paragraph.test_for_bias()
+            paragraphs.append(paragraph)
     
     return paragraphs
 
