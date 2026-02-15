@@ -7,6 +7,8 @@ print("finished importing gemini")
 # .env gemini key
 load_dotenv()
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
+if GEMINI_KEY is None:
+    raise ValueError("GEMINI_KEY is not set in the environment!")
 print(f"Gemini key: {GEMINI_KEY[:5]}")
 genai.configure(api_key=GEMINI_KEY)
 
@@ -14,10 +16,10 @@ class Prompt:
     def __init__(self, system_message=None):
         self.messages = []
         self.system_message = system_message
-        self.model = genai.GenerativeModel("gemini-2.0-flash")
-        
-        if system_message:
-            self.messages.append({"role": "system", "content": system_message})
+        self.model = genai.GenerativeModel(
+            "gemini-2.0-flash",
+            system_instruction=system_message if system_message else None
+        )
     
     def prompt(self, user_input):
         try:
@@ -26,11 +28,10 @@ class Prompt:
             # Build conversation history for Gemini
             history = []
             for msg in self.messages:
-                if msg["role"] != "system":
-                    history.append({
-                        "role": msg["role"],
-                        "parts": [msg["content"]]
-                    })
+                history.append({
+                    "role": msg["role"],
+                    "parts": [msg["content"]]
+                })
             
             # Create chat session with history
             chat = self.model.start_chat(history=history[:-1] if history else [])
