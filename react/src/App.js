@@ -141,7 +141,7 @@ function ArcMeter({ score, color }) {
     return () => controls.stop();
   }, [score]);
 
-  const targetOffset = arcLength * (1 - score / 100);
+  const targetColored = arcLength * (score / 100);
 
   return (
     <div className="sf-arc-container">
@@ -156,17 +156,16 @@ function ArcMeter({ score, color }) {
           strokeLinecap="round"
           transform={`rotate(-225, ${cx}, ${cy})`}
         />
-        {/* Colored fill arc */}
+        {/* Colored fill arc — grow the dash from 0 to targetColored */}
         <motion.circle
           cx={cx} cy={cy} r={r}
           fill="none"
           stroke={color}
           strokeWidth="11"
-          strokeDasharray={`${arcLength} ${gapLength}`}
           strokeLinecap="round"
           transform={`rotate(-225, ${cx}, ${cy})`}
-          initial={{ strokeDashoffset: arcLength }}
-          animate={{ strokeDashoffset: targetOffset }}
+          initial={{ strokeDasharray: `0 ${circumference}` }}
+          animate={{ strokeDasharray: `${targetColored} ${circumference - targetColored}` }}
           transition={{ duration: 1.2, ease: "easeOut" }}
         />
       </svg>
