@@ -107,6 +107,7 @@ function App() {
         body: JSON.stringify({ url }),
       });
       const data = await response.json();
+      console.log("Backend response:", data);
       setLoading(false);
       if (data.status === "ok") {
         setResult(data.data);
@@ -156,7 +157,8 @@ function App() {
       formData.append("file", videoFile);
       const response = await fetch("http://127.0.0.1:5000/fetch-video", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: youtubeUrl }),
       });
       const data = await response.json();
       setLoading(false);
