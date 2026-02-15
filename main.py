@@ -91,12 +91,7 @@ def fetch_audio():
         paragraphs_json = []
         reasons = []
         for para in paragraphs:
-            paragraphs_json.append({
-                "text": para.text,
-                "bias_score": para.is_text_biased_enough,
-                "unbiased_replacement": para.unbiased_replacement,
-                "reason_biased": para.reason_biased
-            })
+            paragraphs_json.append(para.json())
             if para.is_text_biased_enough and para.reason_biased:
                 reasons.append(para.reason_biased)
 
