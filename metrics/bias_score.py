@@ -13,8 +13,8 @@ def return_biased_score(text):
     score, reasoning = -1, []
     print(response)
     for i in response.split("\n"):
-        if i.startswith("\"Score\":"):
+        if i.startswith("\"Score\":") or i.startswith("Score:"):
             score = int(i.split(":")[1].strip())
-        elif i.startswith("\"Reasoning\":"):
+        elif i.startswith("\"Reasoning\":") or i.startswith("Reasoning:"):
             reasoning.append(i.split(":")[1].strip())
     return score, reasoning
