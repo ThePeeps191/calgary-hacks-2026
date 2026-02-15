@@ -39,10 +39,10 @@ def fetch_url():
     paragraphs_json = []
     for para in paragraphs:
         paragraphs_json.append({
-            "text": para.text,
-            "bias_score": para.bias_score,
-            "unbiased_replacement": para.unbiased_replacement,
-            "reason_biased": para.reason_biased
+            "text": getattr(para, "text", None),
+            "bias_score": getattr(para, "bias_score", None),
+            "unbiased_replacement": getattr(para, "unbiased_replacement", None),
+            "reason_biased": getattr(para, "reason_biased", None)
         })
     
     return jsonify({
