@@ -134,6 +134,9 @@ function App() {
   const [dramaIndex, setDramaIndex] = useState(null);
   const [dramaLoading, setDramaLoading] = useState(false);
   const [emotions, setEmotions] = useState(null);
+  const [similarOpen, setSimilarOpen] = useState(false);
+  const [similarArticles, setSimilarArticles] = useState(null);
+  const [similarLoading, setSimilarLoading] = useState(false);
 
   const fetchDramaIndex = async (text) => {
     if (!text) return;
@@ -156,6 +159,30 @@ function App() {
     }
   };
 
+  const handleFindSimilar = async () => {
+    setSimilarOpen(true);
+    if (similarArticles) return; // already fetched
+    setSimilarLoading(true);
+    try {
+      const query = result?.keywords?.slice(0, 3).join(" ") || result?.summary?.split(" ").slice(0, 6).join(" ") || "";
+      const res = await fetch("http://127.0.0.1:5000/search-similar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, url }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setSimilarArticles(data.data);
+      } else {
+        setSimilarArticles([]);
+      }
+    } catch (_) {
+      setSimilarArticles([]);
+    } finally {
+      setSimilarLoading(false);
+    }
+  };
+
   const handleAnalyze = async () => {
     if (!url.trim()) return;
     setLoading(true);
@@ -163,6 +190,8 @@ function App() {
     setResult(null);
     setDramaIndex(null);
     setEmotions(null);
+    setSimilarArticles(null);
+    setSimilarOpen(false);
 
     try {
       const response = await fetch("http://127.0.0.1:5000/fetch-url", {
@@ -713,6 +742,67 @@ function App() {
             </div>
           )}
         </motion.div>
+      )}
+
+      {/* ── Find Similar Articles FAB + Panel ── */}
+      {result && (
+        <>
+          <button className="sf-fab" onClick={handleFindSimilar}>
+            🔍 Find similar articles
+          </button>
+
+          {similarOpen && (
+            <motion.div
+              className="sf-similar-panel"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+            >
+              <div className="sf-similar-header">
+                <h3 className="sf-similar-title">Similar Articles</h3>
+                <button className="sf-similar-close" onClick={() => setSimilarOpen(false)}>✕</button>
+              </div>
+
+              {similarLoading ? (
+                <div className="sf-similar-loading">
+                  <div className="sf-spinner sf-spinner-sm" />
+                  <span>Searching for similar articles…</span>
+                </div>
+              ) : similarArticles && similarArticles.length > 0 ? (
+                <ul className="sf-similar-list">
+                  {similarArticles.map((article, i) => (
+                    <motion.li
+                      key={i}
+                      className="sf-similar-item"
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.07 }}
+                    >
+                      <a
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="sf-similar-link"
+                      >
+                        <span className="sf-similar-article-title">{article.title}</span>
+                        <div className="sf-similar-meta">
+                          {article.source?.name && <span className="sf-similar-source">{article.source.name}</span>}
+                          {article.publishedAt && (
+                            <span className="sf-similar-date">
+                              {new Date(article.publishedAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                            </span>
+                          )}
+                        </div>
+                      </a>
+                    </motion.li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="sf-similar-empty">No similar articles found.</p>
+              )}
+            </motion.div>
+          )}
+        </>
       )}
 
       {/* ── Footer ── */}
