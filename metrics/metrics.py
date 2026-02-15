@@ -15,9 +15,9 @@ EMOTION_WEIGHTS = {
     "anger": 1.4,
     "disgust": 1.2,
     "fear": 1.4,
-    "sadness": 1.1,
+    "sadness": 1.2,
     "surprise": 1.0,
-    "joy": 0.4,
+    "joy": 0.5,
     "neutral": 0.0
 }
 POWER_WORDS = {
