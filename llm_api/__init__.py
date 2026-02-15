@@ -1,3 +1,3 @@
-from prompt import prompt
+from .prompt import Prompt
 
-__all__ = ["prompt"]
+__all__ = ["Prompt"]
