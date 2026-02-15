@@ -541,7 +541,7 @@ body {
 .sf-para-row {
   display: flex;
   gap: 20px;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .sf-para-original,
@@ -559,7 +559,7 @@ body {
 
 /* Bias reason below each paragraph */
 .sf-para-reason {
-  margin-top: 5px;
+  margin-bottom: 25px;
   padding: 5px 10px;
   border-left: 3px solid #f44336; /* red for bias */
   background-color: #fff4f4;

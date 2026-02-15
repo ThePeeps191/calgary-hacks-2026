@@ -590,6 +590,9 @@ function App() {
           {/* Article Info */}
           <div className="sf-card">
             <h3 className="sf-card-label">Article Info</h3>
+            {result.title && (
+              <div className="sf-article-title">{result.title}</div>
+            )}
             {result.top_image && (
               <img
                 src={result.top_image}

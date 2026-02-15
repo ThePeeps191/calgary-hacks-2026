@@ -67,6 +67,7 @@ def fetch_url():
         "data": {
             "paragraphs": paragraphs_json,
             "bias_score": bias_score,
+            "title": content.get("title", ""),
             "authors": content.get("authors", []),
             "date": content.get("date", ""),
             "top_image": content.get("top_image", ""),

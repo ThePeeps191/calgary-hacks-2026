@@ -18,8 +18,10 @@ def get_content(url):
     article.nlp()
     keywords = article.keywords
     summary = article.summary
+    title = article.title
 
     content_dict = {
+        "title": title,
         "authors" : authors,
         "date" : date,
         "text" : text,
