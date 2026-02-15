@@ -644,52 +644,42 @@ function App() {
               <h3 className="sf-card-label">Paragraph Analysis</h3>
 
               <div className="sf-paragraphs-full">
-                {/* Loop through all paragraphs and show diff HTML for each */}
+                {/* Column labels at the top */}
+                <div className="sf-para-labels-top">
+                  <span className="sf-label-original">Original / Changed</span>
+                  <span className="sf-label-unbiased">
+                    Unbiased / Unchanged
+                  </span>
+                </div>
+
+                {/* Loop through all paragraphs */}
                 {result.paragraphs.map((para, idx) => (
-                  <div
-                    key={idx}
-                    className={`sf-para ${
-                      para.bias_score ? "sf-para-biased" : "sf-para-clean"
-                    }`}
-                  >
+                  <div key={idx} className="sf-para-container">
                     <div
-                      className="sf-para-diff"
-                      dangerouslySetInnerHTML={{ __html: para.differences }}
-                    />
+                      className={`sf-para-row ${
+                        para.bias_score ? "sf-para-biased" : "sf-para-clean"
+                      }`}
+                    >
+                      {/* Original paragraph */}
+                      <div className="sf-para-original">
+                        <p>{para.text}</p>
+                      </div>
+
+                      {/* Unbiased paragraph */}
+                      <div className="sf-para-unbiased">
+                        <p>{para.unbiased_replacement || para.text}</p>
+                      </div>
+                    </div>
+
+                    {/* Bias reason below the paragraph */}
+                    {para.bias_score && para.reason_biased && (
+                      <div className="sf-para-reason">
+                        <span className="sf-para-tag">Reason for bias:</span>
+                        <p>{para.reason_biased}</p>
+                      </div>
+                    )}
                   </div>
                 ))}
-
-                {/* At the BOTTOM: show all reasons and unbiased versions */}
-                <div className="sf-all-reasons">
-                  <h4 className="sf-reasons-title">
-                    Bias Summaries & Suggestions
-                  </h4>
-
-                  {result.paragraphs.map(
-                    (para, idx) =>
-                      para.bias_score && (
-                        <div key={idx} className="sf-para-details-bottom">
-                          {para.reason_biased && (
-                            <div className="sf-para-reason-bottom">
-                              <span className="sf-para-tag">
-                                Reason for bias:
-                              </span>
-                              <p>{para.reason_biased}</p>
-                            </div>
-                          )}
-
-                          {para.unbiased_replacement && (
-                            <div className="sf-para-unbiased-bottom">
-                              <span className="sf-para-tag">
-                                Unbiased version:
-                              </span>
-                              <p>{para.unbiased_replacement}</p>
-                            </div>
-                          )}
-                        </div>
-                      ),
-                  )}
-                </div>
               </div>
             </div>
           )}
