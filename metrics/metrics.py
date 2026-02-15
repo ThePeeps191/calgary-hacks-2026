@@ -15,9 +15,9 @@ EMOTION_WEIGHTS = {
     "anger": 1.4,
     "disgust": 1.2,
     "fear": 1.4,
-    "sadness": 1.1,
+    "sadness": 1.2,
     "surprise": 1.0,
-    "joy": 0.4,
+    "joy": 0.5,
     "neutral": 0.0
 }
 POWER_WORDS = {
@@ -57,6 +57,9 @@ def get_drama_index(text):
     Higher = more emotionally intense or manipulative
     """
     emotions = _emotion_probs(text)
+    emotions100 = {}
+    for k in emotions:
+        emotions100[k] = int(emotions[k] * 100)
     emotional = sum(emotions[e] * EMOTION_WEIGHTS[e] for e in emotions) / sum(EMOTION_WEIGHTS.values())
 
     base = emotional ** 0.6 * 50
@@ -65,7 +68,7 @@ def get_drama_index(text):
     capped = min(50, boosted)
     final = int(round(capped * 2))
 
-    return max(1, min(100, final))
+    return [max(1, min(100, final)), emotions100]
 
 if __name__ == "__main__":
     tests = [

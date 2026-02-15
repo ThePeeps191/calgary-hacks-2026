@@ -8,6 +8,7 @@ import scraper
 import bias
 import media
 from metrics import get_drama_index
+from outlet_bias import NewsOutlet
 
 app = Flask(__name__)
 CORS(app)
@@ -68,6 +69,29 @@ def fetch_url():
             "reasons": reasons
         }
     }), 200
+
+@app.route("/fetch-outlet-bias", methods=["POST"])
+def fetch_outlet_bias():
+    data = request.get_json()
+    url = data.get("url")
+
+    if not url:
+        return jsonify({
+            "status": "error",
+            "message": "URL not provided"
+        }), 400
+
+    try:
+        outlet = NewsOutlet(url)
+        return jsonify({
+            "status": "ok",
+            "data": outlet.json()
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 @app.route("/fetch-audio", methods=["POST"])
 def fetch_audio():
@@ -197,6 +221,33 @@ def fetch_video():
         print("FETCH VIDEO ERROR:", e)
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
+@app.route("/search-similar", methods=["POST"])
+def search_similar():
+    data = request.get_json()
+    query = data.get("query")
+    url = data.get("url")
+
+    if not query:
+        return jsonify({
+            "status": "error",
+            "message": "Query not provided"
+        }), 400
+
+    try:
+        if url:
+            articles = scraper.search_urls(query, url)
+        else:
+            articles = scraper.search_urls(query)
+        return jsonify({
+            "status": "ok",
+            "data": articles
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 @app.route("/get-drama-index", methods=["POST"])
 def get_drama_index_route():
