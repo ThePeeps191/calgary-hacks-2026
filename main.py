@@ -8,6 +8,7 @@ import scraper
 import bias
 import media
 from metrics import get_drama_index
+from diff import html_diff
 from outlet_bias import NewsOutlet
 
 app = Flask(__name__)
@@ -45,7 +46,8 @@ def fetch_url():
             "text": para.text,
             "bias_score": para.is_text_biased_enough,
             "unbiased_replacement": para.unbiased_replacement,
-            "reason_biased": para.reason_biased
+            "reason_biased": para.reason_biased,
+            "differences": html_diff(para.text, para.unbiased_replacement)
         })
         if para.is_text_biased_enough and para.reason_biased:
             reasons.append(para.reason_biased)
@@ -56,6 +58,8 @@ def fetch_url():
         bias_score = drama_result[0] if isinstance(drama_result, list) else drama_result
     except Exception:
         bias_score = None
+
+
 
     return jsonify({
         "status": "ok",
