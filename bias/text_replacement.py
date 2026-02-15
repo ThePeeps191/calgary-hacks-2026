@@ -34,3 +34,10 @@ class Paragraph:
         if is_text_biased_enough(self.text):
             self.is_text_biased_enough = True
             self.unbiased_replacement, self.reason_biased = correct_bias(self.text)
+    def json(self):
+        return {
+            "text": self.text,
+            "is_text_biased_enough": self.is_text_biased_enough,
+            "unbiased_replacement": self.unbiased_replacement,
+            "reason_biased": self.reason_biased
+        }
