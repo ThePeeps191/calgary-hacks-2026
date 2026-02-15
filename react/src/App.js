@@ -46,10 +46,14 @@ function FloatingPaths({ position }) {
 
 /* ── Bias helpers ── */
 function getBiasStyle(score) {
-  if (score <= 20) return { color: "#16a34a", label: "Minimal Bias", bg: "#f0fdf4" };
-  if (score <= 40) return { color: "#65a30d", label: "Low Bias", bg: "#f7fee7" };
-  if (score <= 60) return { color: "#ca8a04", label: "Moderate Bias", bg: "#fefce8" };
-  if (score <= 80) return { color: "#ea580c", label: "High Bias", bg: "#fff7ed" };
+  if (score <= 20)
+    return { color: "#16a34a", label: "Minimal Bias", bg: "#f0fdf4" };
+  if (score <= 40)
+    return { color: "#65a30d", label: "Low Bias", bg: "#f7fee7" };
+  if (score <= 60)
+    return { color: "#ca8a04", label: "Moderate Bias", bg: "#fefce8" };
+  if (score <= 80)
+    return { color: "#ea580c", label: "High Bias", bg: "#fff7ed" };
   return { color: "#dc2626", label: "Extreme Bias", bg: "#fef2f2" };
 }
 
@@ -207,7 +211,8 @@ function App() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.65, duration: 0.6 }}
             >
-              Cut through the spin. Detect media bias in seconds.
+              Cut through the spin. Detect media bias in seconds. Arrive at the
+              truth.
             </motion.p>
           </motion.div>
         </div>
@@ -364,13 +369,18 @@ function App() {
           {/* Bias Score */}
           <div
             className="sf-card sf-card-bias"
-            style={biasStyle ? { borderTop: `4px solid ${biasStyle.color}` } : {}}
+            style={
+              biasStyle ? { borderTop: `4px solid ${biasStyle.color}` } : {}
+            }
           >
             <h3 className="sf-card-label">Bias Score</h3>
             {biasStyle ? (
               <>
                 <div className="sf-bias-row">
-                  <div className="sf-bias-number" style={{ color: biasStyle.color }}>
+                  <div
+                    className="sf-bias-number"
+                    style={{ color: biasStyle.color }}
+                  >
                     {biasScore}
                     <span className="sf-bias-denom">/100</span>
                   </div>
@@ -431,7 +441,11 @@ function App() {
           {/* Summary / Transcription */}
           {result.summary && (
             <div className="sf-card">
-              <h3 className="sf-card-label">{activeInput === "audio" ? "Transcribed Text" : "Unbiased Summary"}</h3>
+              <h3 className="sf-card-label">
+                {activeInput === "audio"
+                  ? "Transcribed Text"
+                  : "Unbiased Summary"}
+              </h3>
               <p className="sf-summary-text">{result.summary}</p>
             </div>
           )}
@@ -452,6 +466,42 @@ function App() {
                   </motion.li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* Paragraph-level Bias Analysis */}
+          {result.paragraphs?.length > 0 && (
+            <div className="sf-card">
+              <h3 className="sf-card-label">Paragraph Analysis</h3>
+              <div className="sf-paragraphs">
+                {result.paragraphs.map((para, i) => (
+                  <motion.div
+                    key={i}
+                    className={`sf-para ${para.bias_score ? "sf-para-biased" : "sf-para-clean"}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                  >
+                    <p className="sf-para-text">{para.text}</p>
+                    {para.bias_score && (
+                      <div className="sf-para-details">
+                        {para.unbiased_replacement && (
+                          <div className="sf-para-replacement">
+                            <span className="sf-para-tag">Unbiased version:</span>
+                            <p>{para.unbiased_replacement}</p>
+                          </div>
+                        )}
+                        {para.reason_biased && (
+                          <div className="sf-para-reason">
+                            <span className="sf-para-tag">Why it's biased:</span>
+                            <p>{para.reason_biased}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           )}
 

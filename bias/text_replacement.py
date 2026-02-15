@@ -24,12 +24,11 @@ def segment_paragraphs(text):
     return paragraphs
 
 class Paragraph:
-    text = ""
-    is_text_biased_enough = False
-    unbiased_replacement = ""
-    reason_biased = ""
     def __init__(self, text):
         self.text = text
+        self.is_text_biased_enough = False
+        self.unbiased_replacement = ""
+        self.reason_biased = ""
     def test_for_bias(self):
         if is_text_biased_enough(self.text):
             self.is_text_biased_enough = True

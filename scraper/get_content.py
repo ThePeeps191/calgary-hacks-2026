@@ -4,14 +4,12 @@ print("newspaper has been imported.")
 
 def get_content(url):
     article = newspaper.article(url)
-    article.download()
-    article.parse()
 
     # Article content
     authors = article.authors
-    if article.publish_date.strftime("%Y-%m-%d") is not None:
+    if article.publish_date is not None:
         date = article.publish_date.strftime("%Y-%m-%d")
-    else:   
+    else:
         date = "No Date"
     text = article.text
     top_image = article.top_image
