@@ -652,7 +652,7 @@ function App() {
               <div className="sf-paragraphs-full">
                 {/* Column labels at the top */}
                 <div className="sf-para-labels-top">
-                  <span className="sf-label-original">Original / Changed</span>
+                  <span className="sf-label-original">Original</span>
                   <span className="sf-label-unbiased">
                     Unbiased / Unchanged
                   </span>

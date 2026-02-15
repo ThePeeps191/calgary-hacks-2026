@@ -165,3 +165,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+#user_downloads
+.wav
