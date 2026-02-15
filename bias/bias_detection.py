@@ -13,4 +13,6 @@ def is_text_biased_enough(text):
     """
     chat = Prompt(system_message=SYSTEM_PROMPT)
     response = chat.prompt(text)
-    return response.strip().lower() == "true"
+    
+    # Parse the response (expecting "true" or "false")
+    return response
