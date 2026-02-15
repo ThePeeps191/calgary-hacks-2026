@@ -215,7 +215,7 @@ function App() {
   };
 
   const handleAnalyzeVideo = async () => {
-    if (!videoFile) return;
+    if (!url.trim()) return;
     setLoading(true);
     setError("");
     setResult(null);
@@ -226,9 +226,12 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
       });
+
       const data = await response.json();
       console.log("Backend response:", data);
+
       setLoading(false);
+
       if (data.status === "ok") {
         setResult(data.data);
       } else {
@@ -369,7 +372,6 @@ function App() {
           <div className="sf-input-row sf-file-row">
             <label className="sf-file-label">
               <span className="sf-file-icon">🎬</span>
-              {videoFile ? videoFile.name : "Choose a video file…"}
               <input
                 type="url"
                 placeholder="https://youtube.com/…"
@@ -382,13 +384,13 @@ function App() {
                   handleAnalyzeVideo()
                 }
                 disabled={loading}
-                className="sf-file-hidden"
+                className="sf-url-input"
               />
             </label>
             <button
               className="sf-btn"
               onClick={handleAnalyzeVideo}
-              disabled={loading || !videoFile}
+              disabled={loading || !url.trim()}
             >
               {loading ? "Analyzing…" : "Analyze Video"}
             </button>
@@ -560,14 +562,18 @@ function App() {
                           .map(([emotion, value]) => (
                             <div key={emotion} className="sf-emotion-row">
                               <span className="sf-emotion-name">
-                                {emotion.charAt(0).toUpperCase() + emotion.slice(1)}
+                                {emotion.charAt(0).toUpperCase() +
+                                  emotion.slice(1)}
                               </span>
                               <div className="sf-emotion-bar-track">
                                 <motion.div
                                   className="sf-emotion-bar-fill"
                                   initial={{ width: 0 }}
                                   animate={{ width: `${value}%` }}
-                                  transition={{ duration: 0.8, ease: "easeOut" }}
+                                  transition={{
+                                    duration: 0.8,
+                                    ease: "easeOut",
+                                  }}
                                 />
                               </div>
                               <span className="sf-emotion-value">{value}</span>
