@@ -2,19 +2,14 @@ from llm_api import Prompt
 import os
 
 # Read the system prompt from file
-prompt_file_path = os.path.join(os.path.dirname(__file__), "bias_score.txt")
+prompt_file_path = os.path.join(os.path.dirname(__file__), "bias_score_prompt.txt")
 with open(prompt_file_path, "r") as f:
     SYSTEM_PROMPT = f.read()
 
 def return_biased_score(text):
-    """
-    Uses the Prompt API to determine if the given text is biased enough to warrant correction.
-    Returns True if biased, False otherwise.
-    """
     chat = Prompt(system_message=SYSTEM_PROMPT)
     response = chat.prompt(text)
     
-    # Parse the response (expecting "true" or "false")
     score, reasoning = -1, []
     for i in response.split("\n"):
         if i.startswith("Score:"):

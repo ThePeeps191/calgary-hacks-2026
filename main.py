@@ -8,6 +8,7 @@ import scraper
 import bias
 import media
 from metrics import get_drama_index
+from metrics import return_biased_score
 from diff import html_diff
 from outlet_bias import NewsOutlet
 from media.yt import download_youtube
@@ -59,8 +60,6 @@ def fetch_url():
         bias_score = drama_result[0] if isinstance(drama_result, list) else drama_result
     except Exception:
         bias_score = None
-
-
 
     return jsonify({
         "status": "ok",
@@ -127,10 +126,9 @@ def fetch_audio():
 
         # Calculate drama index as the bias_score
         try:
-            drama_result = get_drama_index(text)
-            bias_score = drama_result[0] if isinstance(drama_result, list) else drama_result
+            bias_score, bias_reason = return_biased_score(text)
         except Exception:
-            bias_score = None
+            bias_score, bias_reason = None, None
 
         return jsonify({
             "status": "ok",
@@ -138,6 +136,7 @@ def fetch_audio():
                 "text": text,
                 "paragraphs": paragraphs_json,
                 "bias_score": bias_score,
+                "bias_reason": bias_reason,
                 "summary": text,
                 "reasons": reasons
             }
