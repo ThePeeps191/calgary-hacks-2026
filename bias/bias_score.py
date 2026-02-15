@@ -7,9 +7,6 @@ with open(prompt_file_path, "r") as f:
     SYSTEM_PROMPT = f.read()
 
 def return_biased_score(text):
-    """
-    Uses the Prompt API to provide a bias score and reasoning for the given text.
-    """
     chat = Prompt(system_message=SYSTEM_PROMPT)
     response = chat.prompt(text)
     
