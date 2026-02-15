@@ -131,7 +131,7 @@ function App() {
       const data = await response.json();
       setLoading(false);
       if (data.status === "ok") {
-        setResult({ summary: data.data.text });
+        setResult(data.data);
       } else {
         setError(data.message || "Error analyzing audio.");
       }

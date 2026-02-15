@@ -65,7 +65,20 @@ def fetch_audio():
 
     try:
         text = media.audio_to_text(filename)
-        return jsonify({"status": "ok", "data": {"text": text}}), 200
+        if text.startswith("Error:"):
+            return jsonify({"status": "error", "message": text}), 500
+
+        paragraphs = bias.segment_paragraphs(text)
+        paragraphs_json = [
+            {
+                "text": para.text,
+                "bias_score": para.bias_score,
+                "unbiased_replacement": para.unbiased_replacement,
+                "reason_biased": para.reason_biased
+            }
+            for para in paragraphs
+        ]
+        return jsonify({"status": "ok", "data": {"text": text, "paragraphs": paragraphs_json}}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
