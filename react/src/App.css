@@ -1,7 +1,6 @@
 /* ── Design tokens ── */
 :root {
   --primary: #0f172a;
-  --primary-mid: #1e293b;
   --accent: #3b82f6;
   --accent-hover: #2563eb;
   --bg: #f1f5f9;
@@ -36,53 +35,80 @@ body {
   min-height: 100vh;
 }
 
-/* ── Header ── */
+/* ─────────────────────────────────────────
+   HEADER  (with flowing background paths)
+───────────────────────────────────────── */
 .sf-header {
-  background: linear-gradient(135deg, var(--primary) 0%, #1e3a5f 100%);
-  padding: 36px 24px 32px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  padding: 52px 24px 48px;
   text-align: center;
   box-shadow: var(--shadow-lg);
 }
 
+/* path layer — absolutely fills header */
+.sf-paths-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sf-paths-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* header content sits above the paths */
 .sf-header-inner {
+  position: relative;
+  z-index: 10;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .sf-logo {
-  font-size: 2.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 2.8rem;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: -0.5px;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .sf-logo-icon {
-  font-size: 2rem;
+  font-size: 2.4rem;
+  margin-right: 6px;
+}
+
+/* Each letter is a span so framer-motion can animate them individually */
+.sf-logo-letter {
+  display: inline-block;
 }
 
 .sf-tagline {
-  margin-top: 8px;
+  margin-top: 12px;
   color: #94a3b8;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
 }
 
-/* ── Search section ── */
+/* ─────────────────────────────────────────
+   SEARCH SECTION
+───────────────────────────────────────── */
 .sf-search {
   max-width: 800px;
-  margin: 40px auto 0;
+  margin: 44px auto 0;
   padding: 0 20px;
   width: 100%;
 }
 
 .sf-search-title {
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   font-weight: 700;
   text-align: center;
   margin-bottom: 8px;
-  color: var(--text);
 }
 
 .sf-search-desc {
@@ -90,11 +116,48 @@ body {
   color: var(--text-muted);
   font-size: 0.95rem;
   margin-bottom: 24px;
-  max-width: 560px;
+  max-width: 520px;
   margin-left: auto;
   margin-right: auto;
 }
 
+/* ── Tabs ── */
+.sf-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: var(--shadow);
+}
+
+.sf-tab {
+  flex: 1;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.sf-tab:hover:not(.sf-tab-active) {
+  background: #f1f5f9;
+  color: var(--text);
+}
+
+.sf-tab-active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── Input row ── */
 .sf-input-row {
   display: flex;
   gap: 10px;
@@ -118,7 +181,6 @@ body {
   padding: 10px 14px;
   background: transparent;
   color: var(--text);
-  border-radius: 8px;
   min-width: 0;
 }
 
@@ -126,16 +188,53 @@ body {
   color: #94a3b8;
 }
 
+/* File upload rows */
+.sf-file-row {
+  align-items: center;
+}
+
+.sf-file-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.sf-file-label:hover {
+  background: #f8fafc;
+  color: var(--text);
+}
+
+.sf-file-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.sf-file-hidden {
+  display: none;
+}
+
+/* ── Analyze button ── */
 .sf-btn {
   padding: 11px 28px;
   background: var(--accent);
-  color: #ffffff;
+  color: #fff;
   border: none;
   border-radius: 9px;
   font-size: 0.98rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: background 0.18s, transform 0.1s;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -153,7 +252,7 @@ body {
   cursor: not-allowed;
 }
 
-/* ── Error banner ── */
+/* ── Error ── */
 .sf-error {
   margin-top: 14px;
   padding: 13px 18px;
@@ -164,7 +263,71 @@ body {
   font-size: 0.9rem;
 }
 
-/* ── Loading ── */
+/* ─────────────────────────────────────────
+   HOW IT WORKS
+───────────────────────────────────────── */
+.sf-how {
+  max-width: 800px;
+  margin: 40px auto 0;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.sf-how-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+}
+
+.sf-how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.sf-how-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.sf-how-icon {
+  font-size: 1.9rem;
+  margin-bottom: 10px;
+}
+
+.sf-how-step {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.sf-how-heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.sf-how-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────
+   LOADING
+───────────────────────────────────────── */
 .sf-loading {
   text-align: center;
   padding: 64px 24px;
@@ -190,7 +353,9 @@ body {
   font-size: 0.95rem;
 }
 
-/* ── Results grid ── */
+/* ─────────────────────────────────────────
+   RESULTS
+───────────────────────────────────────── */
 .sf-results {
   max-width: 800px;
   margin: 28px auto 40px;
@@ -205,7 +370,7 @@ body {
 .sf-card {
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 26px;
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
 }
@@ -220,11 +385,17 @@ body {
 }
 
 /* ── Bias score card ── */
+.sf-bias-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
 .sf-bias-number {
   font-size: 4.5rem;
   font-weight: 800;
   line-height: 1;
-  margin-bottom: 4px;
 }
 
 .sf-bias-denom {
@@ -234,10 +405,12 @@ body {
   margin-left: 2px;
 }
 
-.sf-bias-verdict {
-  font-size: 1.05rem;
+.sf-bias-badge {
+  padding: 6px 16px;
+  border-radius: 99px;
+  font-size: 0.88rem;
   font-weight: 700;
-  margin-bottom: 18px;
+  margin-bottom: 6px;
 }
 
 .sf-bar-track {
@@ -251,7 +424,6 @@ body {
 .sf-bar-fill {
   height: 100%;
   border-radius: 99px;
-  transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sf-bar-scale {
@@ -267,7 +439,7 @@ body {
   font-size: 0.95rem;
 }
 
-/* ── Article info card ── */
+/* ── Article info ── */
 .sf-article-img {
   width: 100%;
   max-height: 240px;
@@ -297,14 +469,14 @@ body {
   color: var(--text);
 }
 
-/* ── Summary card ── */
+/* ── Summary ── */
 .sf-summary-text {
   line-height: 1.75;
   font-size: 0.95rem;
   color: var(--text);
 }
 
-/* ── Bias reasons card ── */
+/* ── Bias reasons ── */
 .sf-reasons-list {
   list-style: none;
   display: flex;
@@ -322,7 +494,7 @@ body {
   line-height: 1.55;
 }
 
-/* ── Keywords card ── */
+/* ── Keywords ── */
 .sf-keywords {
   display: flex;
   flex-wrap: wrap;
@@ -339,21 +511,38 @@ body {
   font-weight: 500;
 }
 
-/* ── Footer ── */
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
 .sf-footer {
   margin-top: auto;
   text-align: center;
-  padding: 20px 24px;
+  padding: 22px 24px;
   font-size: 0.85rem;
   color: var(--text-muted);
   border-top: 1px solid var(--border);
   background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-/* ── Responsive ── */
-@media (max-width: 600px) {
+.sf-footer-logo {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sf-footer-sep {
+  color: var(--border);
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width: 640px) {
   .sf-logo {
-    font-size: 1.7rem;
+    font-size: 2rem;
   }
 
   .sf-bias-number {
@@ -367,5 +556,14 @@ body {
   .sf-btn {
     width: 100%;
     text-align: center;
+  }
+
+  .sf-how-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sf-footer {
+    flex-direction: column;
+    gap: 4px;
   }
 }
