@@ -2,9 +2,10 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-# Scraper imports
+# Custom imports
 import scraper
 import bias
+import media
 
 app = Flask(__name__)
 CORS(app)
@@ -47,6 +48,29 @@ def fetch_url():
         "status": "success",
         "paragraphs": paragraphs_json
     }), 200
+
+@app.route("/convert-audio", methods=["POST"])
+def convert_audio():
+    data = request.get_json()
+    filename = data.get("filename")
+    
+    if not filename:
+        return jsonify({
+            "status": "error",
+            "message": "Filename not provided"
+        }), 400
+    
+    try:
+        text = media.audio_to_text(filename)
+        return jsonify({
+            "status": "success",
+            "text": text
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 if __name__ == "__main__":
     app.run(debug = True, port = 5000)
