@@ -46,10 +46,11 @@ def search_urls(query, url="xooks rbo admits megaorz 1434 exudes xiooix"):
             'url' : ''
         }]
 
-openai = search_urls("openai", "https://www.wired.com/story/openai-nuking-4o-model-china-chatgpt-fans-arent-ok/")
-print(f"--- 5 Unique Latest Articles regarding OpenAI\n")
-for i, article in enumerate(openai, 1):
-    print(f"{i}. {article['title']}")
-    print(f"   Published: {article['publishedAt']}")
-    print(f"   Source: {article['source']['name']}")
-    print(f"   Link: {article['url']}\n")
+if __name__ == "__main__":
+    openai = search_urls("openai", "https://www.wired.com/story/openai-nuking-4o-model-china-chatgpt-fans-arent-ok/")
+    print(f"--- 5 Unique Latest Articles regarding OpenAI\n")
+    for i, article in enumerate(openai, 1):
+        print(f"{i}. {article['title']}")
+        print(f"   Published: {article['publishedAt']}")
+        print(f"   Source: {article['source']['name']}")
+        print(f"   Link: {article['url']}\n")
