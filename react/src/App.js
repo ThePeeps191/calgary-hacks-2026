@@ -94,6 +94,17 @@ function getDramaStyle(score) {
   };
 }
 
+function getPoliticalSpectrumStyle(rating) {
+  const spectrumMap = {
+    "left": { color: "#2563eb", label: "Left", position: 20 },
+    "left-center": { color: "#60a5fa", label: "Left-Center", position: 35 },
+    "center": { color: "#6b7280", label: "Center", position: 50 },
+    "right-center": { color: "#fca5a5", label: "Right-Center", position: 65 },
+    "right": { color: "#dc2626", label: "Right", position: 80 },
+  };
+  return spectrumMap[rating?.toLowerCase()] || { color: "#9ca3af", label: "Unknown", position: 50 };
+}
+
 const HOW_IT_WORKS = [
   {
     icon: "🔗",
@@ -202,6 +213,24 @@ function App() {
   const [similarArticles, setSimilarArticles] = useState(null);
   const [similarLoading, setSimilarLoading] = useState(false);
   const [openReasons, setOpenReasons] = useState({});
+  const [outletBias, setOutletBias] = useState(null);
+
+  const fetchOutletBias = async (articleUrl) => {
+    if (!articleUrl) return;
+    try {
+      const res = await fetch("http://127.0.0.1:5000/fetch-outlet-bias", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: articleUrl }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setOutletBias(data.data);
+      }
+    } catch (_) {
+      // outlet bias is optional — don't surface errors for it
+    }
+  };
 
   const fetchDramaIndex = async (text) => {
     if (!text) return;
@@ -260,6 +289,7 @@ function App() {
     setEmotions(null);
     setSimilarArticles(null);
     setSimilarOpen(false);
+    setOutletBias(null);
 
     try {
       const response = await fetch("http://127.0.0.1:5000/fetch-url", {
@@ -272,6 +302,7 @@ function App() {
       if (data.status === "ok") {
         setResult(data.data);
         fetchDramaIndex(data.data.summary || "");
+        fetchOutletBias(url);
       } else {
         setError(data.message || "Error fetching content.");
       }
@@ -666,6 +697,55 @@ function App() {
                 alt="Article"
                 className="sf-article-img"
               />
+            )}
+            {/* Outlet Logo and Political Spectrum */}
+            {outletBias && (
+              <motion.div 
+                className="sf-outlet-section"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="sf-outlet-info">
+                  {outletBias.logo_url && (
+                    <img 
+                      src={outletBias.logo_url} 
+                      alt={outletBias.name || "Outlet"}
+                      className="sf-outlet-logo"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  )}
+                  {outletBias.name && (
+                    <span className="sf-outlet-name">{outletBias.name}</span>
+                  )}
+                </div>
+                {outletBias.rating && (() => {
+                  const spectrumStyle = getPoliticalSpectrumStyle(outletBias.rating);
+                  return (
+                    <div className="sf-political-spectrum">
+                      <div className="sf-spectrum-label">Political Bias</div>
+                      <div className="sf-spectrum-bar">
+                        <div className="sf-spectrum-background" />
+                        <motion.div 
+                          className="sf-spectrum-indicator"
+                          style={{ 
+                            background: spectrumStyle.color,
+                            left: `${spectrumStyle.position}%`
+                          }}
+                          initial={{ opacity: 0, scale: 0.6 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.5, ease: "easeOut" }}
+                        />
+                      </div>
+                      <div className="sf-spectrum-scale">
+                        <span>Left</span>
+                        <span style={{ color: spectrumStyle.color, fontWeight: "600" }}>{spectrumStyle.label}</span>
+                        <span>Right</span>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </motion.div>
             )}
             <div className="sf-meta-grid">
               {result.authors?.length > 0 && (
