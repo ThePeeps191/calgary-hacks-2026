@@ -644,6 +644,62 @@ body {
   font-style: italic;
 }
 
+/* ── Emotion breakdown ── */
+.sf-emotions {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.sf-emotions-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.sf-emotions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sf-emotion-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 32px;
+  align-items: center;
+  gap: 10px;
+}
+
+.sf-emotion-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: capitalize;
+}
+
+.sf-emotion-bar-track {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.sf-emotion-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+}
+
+.sf-emotion-value {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: right;
+}
+
 .sf-drama-loading {
   display: flex;
   align-items: center;

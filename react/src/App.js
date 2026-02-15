@@ -133,6 +133,7 @@ function App() {
   const [currentParagraph, setCurrentParagraph] = useState(0);
   const [dramaIndex, setDramaIndex] = useState(null);
   const [dramaLoading, setDramaLoading] = useState(false);
+  const [emotions, setEmotions] = useState(null);
 
   const fetchDramaIndex = async (text) => {
     if (!text) return;
@@ -146,6 +147,7 @@ function App() {
       const data = await res.json();
       if (data.status === "success" && data.drama_index != null) {
         setDramaIndex(data.drama_index[0]);
+        setEmotions(data.drama_index[1] || null);
       }
     } catch (_) {
       // drama index is a bonus — don't surface errors for it
@@ -160,6 +162,7 @@ function App() {
     setError("");
     setResult(null);
     setDramaIndex(null);
+    setEmotions(null);
 
     try {
       const response = await fetch("http://127.0.0.1:5000/fetch-url", {
@@ -188,6 +191,7 @@ function App() {
     setError("");
     setResult(null);
     setDramaIndex(null);
+    setEmotions(null);
 
     try {
       const formData = new FormData();
@@ -547,6 +551,31 @@ function App() {
                     Measures emotional intensity and use of manipulative
                     language — independent of political lean.
                   </p>
+                  {emotions && (
+                    <div className="sf-emotions">
+                      <div className="sf-emotions-title">Emotion Breakdown</div>
+                      <div className="sf-emotions-grid">
+                        {Object.entries(emotions)
+                          .sort(([, a], [, b]) => b - a)
+                          .map(([emotion, value]) => (
+                            <div key={emotion} className="sf-emotion-row">
+                              <span className="sf-emotion-name">
+                                {emotion.charAt(0).toUpperCase() + emotion.slice(1)}
+                              </span>
+                              <div className="sf-emotion-bar-track">
+                                <motion.div
+                                  className="sf-emotion-bar-fill"
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${value}%` }}
+                                  transition={{ duration: 0.8, ease: "easeOut" }}
+                                />
+                              </div>
+                              <span className="sf-emotion-value">{value}</span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </motion.div>
