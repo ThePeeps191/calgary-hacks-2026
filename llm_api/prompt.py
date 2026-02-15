@@ -7,6 +7,8 @@ print("finished importing gemini")
 # .env gemini key
 load_dotenv()
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
+if GEMINI_KEY is None:
+    raise ValueError("GEMINI_KEY is not set in the environment!")
 print(f"Gemini key: {GEMINI_KEY[:5]}")
 genai.configure(api_key=GEMINI_KEY)
 
