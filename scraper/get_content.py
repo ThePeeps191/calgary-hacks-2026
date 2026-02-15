@@ -3,9 +3,6 @@ import newspaper
 print("newspaper has been imported.")
 
 def get_content(url):
-    """
-    Get content from a url such as authrow, date, text, and keywords
-    """
     article = newspaper.article(url)
     article.download()
     article.parse()
