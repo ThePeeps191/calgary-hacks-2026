@@ -51,7 +51,7 @@ def fetch_url():
 
     # Calculate drama index as the bias_score
     try:
-        bias_score = metrics.get_drama_index(text)
+        bias_score = get_drama_index(text)
     except Exception:
         bias_score = None
 
@@ -102,7 +102,7 @@ def fetch_audio():
 
         # Calculate drama index as the bias_score
         try:
-            bias_score = metrics.get_drama_index(text)
+            bias_score = get_drama_index(text)
         except Exception:
             bias_score = None
 
@@ -152,7 +152,7 @@ def fetch_video():
                 reasons.append(para.reason_biased)
 
         try:
-            bias_score = metrics.get_drama_index(text)
+            bias_score = get_drama_index(text)
         except Exception:
             bias_score = None
 
@@ -191,6 +191,67 @@ def convert_audio():
             "status": "error",
             "message": str(e)
         }), 500
+    
+@app.route("/fetch-video", methods=["POST"])
+def fetch_video():
+    data = request.get_json()
+    if not data or "url" not in data:
+        return jsonify({"status": "error", "message": "No YouTube URL provided"}), 400
+
+    url = data["url"].strip()
+    if not url:
+        return jsonify({"status": "error", "message": "Empty URL"}), 400
+
+    downloads_dir = os.path.join(os.path.dirname(__file__), "user_downloads")
+    os.makedirs(downloads_dir, exist_ok=True)
+
+    try:
+        import yt_dlp
+
+        ydl_opts = {
+            "format": "bestaudio/best",
+            "outtmpl": os.path.join(downloads_dir, "%(id)s.%(ext)s"),
+            "quiet": True,
+            "postprocessors": [{
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "wav",
+            }],
+        }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=True)
+            video_id = info["id"]
+
+        audio_filename = f"{video_id}.wav"
+        audio_path = os.path.join(downloads_dir, audio_filename)
+
+        text = media.audio_to_text(audio_filename)
+        if not text or text.startswith("Error:"):
+            return jsonify({"status": "error", "message": text}), 500
+
+        paragraphs = bias.segment_paragraphs(text)
+        paragraphs_json = [
+            {
+                "text": para.text,
+                "bias_score": getattr(para, "is_text_biased_enough", None),
+                "unbiased_replacement": getattr(para, "unbiased_replacement", None),
+                "reason_biased": getattr(para, "reason_biased", None),
+            }
+            for para in paragraphs
+        ]
+
+        return jsonify({
+            "status": "ok",
+            "data": {
+                "text": text,
+                "paragraphs": paragraphs_json
+            }
+        }), 200
+
+    except Exception as e:
+        print("FETCH VIDEO ERROR:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 @app.route("/get-drama-index", methods=["POST"])
 def get_drama_index_route():
