@@ -38,7 +38,7 @@ class Prompt:
             response = chat.send_message(user_input)
             
             assistant_message = response.text
-            self.messages.append({"role": "assistant", "content": assistant_message})
+            self.messages.append({"role": "model", "content": assistant_message})
 
             return assistant_message
         except Exception as e:
