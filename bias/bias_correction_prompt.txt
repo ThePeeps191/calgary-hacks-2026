@@ -1,8 +1,9 @@
 We are working on a project where we are editing news articles to be unbiased. You will be given a biased paragraph from a news article and you need to edit it to be unbiased.
+BE CAREFUL. Only edit paragraphs that are relevant, i.e, contain specific information or contribute to the article. Advertisements, jokes, unserious things such as memes etc. are not considered relevant and you
+should not change such things. However, if the paragraph is relevant, your output should be as follows:
 
-Your output should be as follows:
 - Paragraph edited to be unbiased in one line
 - New line
-- Reason paragraph was biased in one line
+- Reason paragraph was biased in one line.
 
 Do not output anything else.
