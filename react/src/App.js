@@ -92,7 +92,7 @@ function App() {
   const [error, setError] = useState("");
   const [activeInput, setActiveInput] = useState("url");
   const [audioFile, setAudioFile] = useState(null);
-  const [videoFile, setVideoFile] = useState(null);
+  const [videoFile, setVideoFile] = useState("url");
 
   const handleAnalyze = async () => {
     if (!url.trim()) return;
@@ -153,19 +153,18 @@ function App() {
     setResult(null);
 
     try {
-      const formData = new FormData();
-      formData.append("file", videoFile);
       const response = await fetch("http://127.0.0.1:5000/fetch-video", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: youtubeUrl }),
+        body: JSON.stringify({ url }),
       });
       const data = await response.json();
+      console.log("Backend response:", data);
       setLoading(false);
       if (data.status === "ok") {
         setResult(data.data);
       } else {
-        setError(data.message || "Error analyzing video.");
+        setError(data.message || "Error fetching content.");
       }
     } catch (err) {
       setLoading(false);
@@ -304,9 +303,16 @@ function App() {
               <span className="sf-file-icon">🎬</span>
               {videoFile ? videoFile.name : "Choose a video file…"}
               <input
-                type="file"
-                accept="video/*"
-                onChange={(e) => setVideoFile(e.target.files[0])}
+                type="url"
+                placeholder="https://youtube.com/…"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" &&
+                  !loading &&
+                  url.trim() &&
+                  handleAnalyzeVideo()
+                }
                 disabled={loading}
                 className="sf-file-hidden"
               />
@@ -489,13 +495,17 @@ function App() {
                       <div className="sf-para-details">
                         {para.unbiased_replacement && (
                           <div className="sf-para-replacement">
-                            <span className="sf-para-tag">Unbiased version:</span>
+                            <span className="sf-para-tag">
+                              Unbiased version:
+                            </span>
                             <p>{para.unbiased_replacement}</p>
                           </div>
                         )}
                         {para.reason_biased && (
                           <div className="sf-para-reason">
-                            <span className="sf-para-tag">Why it's biased:</span>
+                            <span className="sf-para-tag">
+                              Why it's biased:
+                            </span>
                             <p>{para.reason_biased}</p>
                           </div>
                         )}
