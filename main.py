@@ -10,6 +10,7 @@ import media
 from metrics import get_drama_index
 from diff import html_diff
 from outlet_bias import NewsOutlet
+from media.yt import download_youtube
 
 app = Flask(__name__)
 CORS(app)
@@ -281,6 +282,38 @@ def get_drama_index_route():
             "status": "error",
             "message": str(e)
         }), 500
+    
+@app.route("/convert-yt", methods=["POST"])
+def convert_yt():
+    data = request.get_json()
+    url = data.get("url")
+
+    if not url:
+        return jsonify({
+            "status": "error",
+            "message": "URL not provided"
+        }), 400
+
+    try:
+        audio_filename = download_youtube(url)
+        text = media.audio_to_text(audio_filename)
+        
+        if text.startswith("Error:"):
+            return jsonify({
+                "status": "error",
+                "message": text
+            }), 500
+        
+        return jsonify({
+            "status": "ok",
+            "text": text
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
 
 if __name__ == "__main__":
     app.run(debug = True, port = 5000)
