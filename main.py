@@ -40,7 +40,7 @@ def fetch_url():
     for para in paragraphs:
         paragraphs_json.append({
             "text": para.text,
-            "bias_score": para.bias_score,
+            "bias_score": para.is_text_biased_enough,
             "unbiased_replacement": para.unbiased_replacement,
             "reason_biased": para.reason_biased
         })
@@ -72,7 +72,7 @@ def fetch_audio():
         paragraphs_json = [
             {
                 "text": para.text,
-                "bias_score": para.bias_score,
+                "bias_score": para.is_text_biased_enough,
                 "unbiased_replacement": para.unbiased_replacement,
                 "reason_biased": para.reason_biased
             }
