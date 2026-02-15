@@ -7,7 +7,7 @@ print("metrics.py imports finished")
 # Load pretrained emotion model
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, use_safetensors=True)
 model.eval()
 
 EMOTIONS = ["anger", "disgust", "fear", "joy", "neutral", "sadness", "surprise"]
@@ -26,7 +26,7 @@ POWER_WORDS = {
     "devastating","apocalypse","terror","violent","extreme",
     "corrupt","evil","outrage","attack","invasion","fuck","bad","horrendous","terrible","unjustified"
 }
-ABSOLUTIST = {"everything","nothing","always","never","all","none","everyone","nobody"}
+ABSOLUTIST = {"everything","nothing","always","never","all","none","everyone","nobody","everytime","rarely"}
 
 def _emotion_probs(text):
     inputs = tokenizer(
