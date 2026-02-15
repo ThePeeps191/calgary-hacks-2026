@@ -206,21 +206,34 @@ def fetch_video():
             return jsonify({"status": "error", "message": text}), 500
 
         paragraphs = bias.segment_paragraphs(text)
-        paragraphs_json = [
-            {
+        paragraphs_json = []
+        reasons = []
+        for para in paragraphs:
+            paragraphs_json.append({
                 "text": para.text,
-                "bias_score": getattr(para, "is_text_biased_enough", None),
-                "unbiased_replacement": getattr(para, "unbiased_replacement", None),
-                "reason_biased": getattr(para, "reason_biased", None),
-            }
-            for para in paragraphs
-        ]
+                "bias_score": para.is_text_biased_enough,
+                "unbiased_replacement": para.unbiased_replacement,
+                "reason_biased": para.reason_biased,
+                "differences": html_diff(para.text, para.unbiased_replacement)
+            })
+            if para.is_text_biased_enough and para.reason_biased:
+                reasons.append(para.reason_biased)
+
+        # Calculate drama index as the bias_score
+        try:
+            drama_result = get_drama_index(text)
+            bias_score = drama_result[0] if isinstance(drama_result, list) else drama_result
+        except Exception:
+            bias_score = None
 
         return jsonify({
             "status": "ok",
             "data": {
                 "text": text,
-                "paragraphs": paragraphs_json
+                "paragraphs": paragraphs_json,
+                "bias_score": bias_score,
+                "summary": text,
+                "reasons": reasons
             }
         }), 200
 
