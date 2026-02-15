@@ -7,6 +7,7 @@ from flask_cors import CORS
 import scraper
 import bias
 import media
+from metrics import get_drama_index
 
 app = Flask(__name__)
 CORS(app)
@@ -39,10 +40,10 @@ def fetch_url():
     paragraphs_json = []
     for para in paragraphs:
         paragraphs_json.append({
-            "text": getattr(para, "text", None),
-            "bias_score": getattr(para, "bias_score", None),
-            "unbiased_replacement": getattr(para, "unbiased_replacement", None),
-            "reason_biased": getattr(para, "reason_biased", None)
+            "text": para.text,
+            "bias_score": para.is_text_biased_enough,
+            "unbiased_replacement": para.unbiased_replacement,
+            "reason_biased": para.reason_biased
         })
     
     return jsonify({
@@ -72,7 +73,7 @@ def fetch_audio():
         paragraphs_json = [
             {
                 "text": para.text,
-                "bias_score": para.bias_score,
+                "bias_score": para.is_text_biased_enough,
                 "unbiased_replacement": para.unbiased_replacement,
                 "reason_biased": para.reason_biased
             }
@@ -98,6 +99,29 @@ def convert_audio():
         return jsonify({
             "status": "success",
             "text": text
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+@app.route("/get-drama-index", methods=["POST"])
+def get_drama_index_route():
+    data = request.get_json()
+    text = data.get("text")
+    
+    if not text:
+        return jsonify({
+            "status": "error",
+            "message": "Text not provided"
+        }), 400
+    
+    try:
+        drama_index = get_drama_index(text)
+        return jsonify({
+            "status": "success",
+            "drama_index": drama_index
         }), 200
     except Exception as e:
         return jsonify({
