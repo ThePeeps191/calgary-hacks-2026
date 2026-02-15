@@ -117,7 +117,7 @@ The drama index (1-100) combines:
 - **Real-time Results** - Streaming paragraph-by-paragraph feedback
 - **Visual Bias Scoring** - Color-coded bias indicators
 - **Animated Background** - Smooth, modern interface
-- **Responsive Design** - Works on desktop and mobile
+- **Responsive Design** - Works on desktop
 
 ---
 

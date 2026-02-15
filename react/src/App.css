@@ -543,6 +543,42 @@ body {
   font-weight: 500;
 }
 
+/* ── Drama Index card ── */
+.sf-drama-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.sf-drama-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.sf-drama-desc {
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.sf-drama-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+
+.sf-spinner-sm {
+  width: 22px;
+  height: 22px;
+  border-width: 3px;
+  margin: 0;
+}
+
 /* ─────────────────────────────────────────
    FOOTER
 ───────────────────────────────────────── */
