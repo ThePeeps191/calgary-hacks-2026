@@ -40,7 +40,7 @@ SpinFilter analyzes articles, audio, and text content to identify political bias
 ### Frontend
 - **React** - UI framework
 - **Framer Motion** - Animations
-- **TailwindCSS** - Styling
+- **Custom CSS** - Vanilla CSS with CSS variables for styling (no utility framework)
 
 ### APIs & Libraries
 - **python-dotenv** - Environment variables
