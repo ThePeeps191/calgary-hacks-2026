@@ -61,8 +61,7 @@ calgary-hacks-2026/
 ├── scraper/                # Web scraping module
 │   ├── __init__.py
 │   ├── get_content.py     # Extract article text, authors, date, keywords
-│   ├── search_content.py  # Search for related articles via News API
-│   └── __pycache__/
+│   └── search_content.py  # Search for related articles via News API
 │
 ├── bias/                   # Bias detection & correction
 │   ├── __init__.py
