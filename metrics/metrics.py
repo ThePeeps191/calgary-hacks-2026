@@ -68,7 +68,7 @@ def get_drama_index(text):
     capped = min(50, boosted)
     final = int(round(capped * 2))
 
-    return [max(1, min(100, final)), emotions100]
+    return [min(100, max(1, min(100, final)) * 2), emotions100]
 
 if __name__ == "__main__":
     tests = [
