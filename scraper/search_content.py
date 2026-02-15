@@ -12,8 +12,6 @@ def search_urls(query, url):
        'sortBy=popularity&'
        f'apiKey={api_key}')
     response = requests.get(u)
-    print(response.text)
-    print(response.json())
 
     if response.status_code == 200:
         data = response.json()
@@ -32,7 +30,6 @@ def search_urls(query, url):
             if len(unique_articles) == 5:
                 break
 
-        # print(f"--- 5 Unique Latest Articles for '{query}' ---\n")
         ans = []
         for i, article in enumerate(unique_articles, 1):
             ans.append(article)
@@ -47,4 +44,10 @@ def search_urls(query, url):
         print(response.json())
 
 # Call the function
-# search_urls("openai", "https://www.wired.com/story/openai-nuking-4o-model-china-chatgpt-fans-arent-ok/")
+openai = search_urls("openai", "https://www.wired.com/story/openai-nuking-4o-model-china-chatgpt-fans-arent-ok/")
+print(f"--- 5 Unique Latest Articles regarding OpenAI\n")
+for i, article in enumerate(openai, 1):
+    print(f"{i}. {article['title']}")
+    print(f"   Published: {article['publishedAt']}")
+    print(f"   Source: {article['source']['name']}")
+    print(f"   Link: {article['url']}\n")
