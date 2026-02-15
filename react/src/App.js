@@ -14,6 +14,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [activeInput, setActiveInput] = useState("url"); // which input to show
+  const [audioFile, setAudioFile] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
 
   const handleAnalyze = async () => {
     if (!url.trim()) return;
@@ -42,6 +45,64 @@ function App() {
     }
   };
 
+  const handleAnalyzeAudio = async () => {
+    if (!audioFile) return;
+    setLoading(true);
+    setError("");
+    setResult(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", audioFile);
+
+      const response = await fetch("http://127.0.0.1:5000/fetch-audio", {
+        method: "POST",
+        body: formData, // no JSON, we send FormData for file uploads
+      });
+
+      const data = await response.json();
+      setLoading(false);
+
+      if (data.status === "ok") {
+        setResult(data.data);
+      } else {
+        setError(data.message || "Error analyzing audio.");
+      }
+    } catch (err) {
+      setLoading(false);
+      setError("Could not reach the server. Is the backend running?");
+    }
+  };
+
+  const handleAnalyzeVideo = async () => {
+    if (!videoFile) return;
+    setLoading(true);
+    setError("");
+    setResult(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", videoFile);
+
+      const response = await fetch("http://127.0.0.1:5000/fetch-video", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      setLoading(false);
+
+      if (data.status === "ok") {
+        setResult(data.data);
+      } else {
+        setError(data.message || "Error analyzing video.");
+      }
+    } catch (err) {
+      setLoading(false);
+      setError("Could not reach the server. Is the backend running?");
+    }
+  };
+
   const biasScore = result?.bias_score;
   const biasStyle = biasScore !== undefined ? getBiasStyle(biasScore) : null;
 
@@ -60,33 +121,86 @@ function App() {
         </div>
       </header>
 
-      {/* ── Search ── */}
+      {/* ── Input Selector ── */}
       <section className="sf-search">
-        <h2 className="sf-search-title">Analyze an Article</h2>
+        <h2 className="sf-search-title">Analyze Content</h2>
         <p className="sf-search-desc">
-          Paste any news article URL to receive a bias score, unbiased summary,
-          and detailed reasoning.
+          Choose a content type to analyze: URL, audio, or video.
         </p>
-        <div className="sf-input-row">
-          <input
-            type="url"
-            placeholder="https://example.com/news-article…"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" && !loading && url.trim() && handleAnalyze()
-            }
-            disabled={loading}
-            className="sf-url-input"
-          />
-          <button
-            className="sf-btn"
-            onClick={handleAnalyze}
-            disabled={loading || !url.trim()}
-          >
-            {loading ? "Analyzing…" : "Analyze"}
+
+        {/* Three buttons side by side */}
+        <div className="sf-button-row">
+          <button className="sf-btn" onClick={() => setActiveInput("url")}>
+            URL
+          </button>
+          <button className="sf-btn" onClick={() => setActiveInput("audio")}>
+            Audio
+          </button>
+          <button className="sf-btn" onClick={() => setActiveInput("video")}>
+            Video
           </button>
         </div>
+
+        {/* Conditional rendering of input areas */}
+        {activeInput === "url" && (
+          <div className="sf-input-row">
+            <input
+              type="url"
+              placeholder="https://example.com/news-article…"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && !loading && url.trim() && handleAnalyze()
+              }
+              disabled={loading}
+              className="sf-url-input"
+            />
+            <button
+              className="sf-btn"
+              onClick={handleAnalyze}
+              disabled={loading || !url.trim()}
+            >
+              {loading ? "Analyzing…" : "Analyze"}
+            </button>
+          </div>
+        )}
+
+        {activeInput === "audio" && (
+          <div className="sf-input-row">
+            <input
+              type="file"
+              accept="audio/*"
+              onChange={(e) => setAudioFile(e.target.files[0])}
+              disabled={loading}
+            />
+            <button
+              className="sf-btn"
+              onClick={handleAnalyzeAudio}
+              disabled={loading || !audioFile}
+            >
+              {loading ? "Analyzing…" : "Analyze Audio"}
+            </button>
+          </div>
+        )}
+
+        {activeInput === "video" && (
+          <div className="sf-input-row">
+            <input
+              type="file"
+              accept="video/*"
+              onChange={(e) => setVideoFile(e.target.files[0])}
+              disabled={loading}
+            />
+            <button
+              className="sf-btn"
+              onClick={handleAnalyzeVideo}
+              disabled={loading || !videoFile}
+            >
+              {loading ? "Analyzing…" : "Analyze Video"}
+            </button>
+          </div>
+        )}
+
         {error && <div className="sf-error">{error}</div>}
       </section>
 
@@ -106,11 +220,17 @@ function App() {
             <h3 className="sf-card-label">Bias Score</h3>
             {biasStyle ? (
               <>
-                <div className="sf-bias-number" style={{ color: biasStyle.color }}>
+                <div
+                  className="sf-bias-number"
+                  style={{ color: biasStyle.color }}
+                >
                   {biasScore}
                   <span className="sf-bias-denom">/100</span>
                 </div>
-                <div className="sf-bias-verdict" style={{ color: biasStyle.color }}>
+                <div
+                  className="sf-bias-verdict"
+                  style={{ color: biasStyle.color }}
+                >
                   {biasStyle.label}
                 </div>
                 <div className="sf-bar-track">
