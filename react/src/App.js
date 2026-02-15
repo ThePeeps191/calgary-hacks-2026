@@ -93,6 +93,7 @@ function App() {
   const [activeInput, setActiveInput] = useState("url");
   const [audioFile, setAudioFile] = useState(null);
   const [videoFile, setVideoFile] = useState("url");
+  const [currentParagraph, setCurrentParagraph] = useState(0);
 
   const handleAnalyze = async () => {
     if (!url.trim()) return;
@@ -477,7 +478,7 @@ function App() {
             </div>
           )}
 
-          {/* Paragraph-level Bias Analysis */}
+          {/* Paragraph-level Bias Analysis }
           {result.paragraphs?.length > 0 && (
             <div className="sf-card">
               <h3 className="sf-card-label">Paragraph Analysis</h3>
@@ -513,6 +514,87 @@ function App() {
                     )}
                   </motion.div>
                 ))}
+              </div>
+            </div>
+          )*/}
+
+          {/* Paragraph‑level Bias Analysis */}
+          {result.paragraphs?.length > 0 && (
+            <div className="sf-card">
+              <h3 className="sf-card-label">Paragraph Analysis</h3>
+
+              <div className="sf-paragraph-viewer">
+                {/* navigation buttons */}
+                <div className="sf-nav-buttons">
+                  <button
+                    className="sf-btn"
+                    onClick={() =>
+                      setCurrentParagraph(
+                        (currentParagraph - 1 + result.paragraphs.length) %
+                          result.paragraphs.length,
+                      )
+                    }
+                  >
+                    Previous
+                  </button>
+
+                  <span className="sf-nav-index">
+                    {currentParagraph + 1} / {result.paragraphs.length}
+                  </span>
+
+                  <button
+                    className="sf-btn"
+                    onClick={() =>
+                      setCurrentParagraph(
+                        (currentParagraph + 1) % result.paragraphs.length,
+                      )
+                    }
+                  >
+                    Next
+                  </button>
+                </div>
+
+                {/* animated paragraph display */}
+                <motion.div
+                  key={currentParagraph}
+                  className={`sf-para ${
+                    result.paragraphs[currentParagraph].bias_score
+                      ? "sf-para-biased"
+                      : "sf-para-clean"
+                  }`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <p className="sf-para-text">
+                    {result.paragraphs[currentParagraph].text}
+                  </p>
+
+                  {result.paragraphs[currentParagraph].bias_score && (
+                    <div className="sf-para-details">
+                      {result.paragraphs[currentParagraph]
+                        .unbiased_replacement && (
+                        <div className="sf-para-replacement">
+                          <span className="sf-para-tag">Unbiased version:</span>
+                          <p>
+                            {
+                              result.paragraphs[currentParagraph]
+                                .unbiased_replacement
+                            }
+                          </p>
+                        </div>
+                      )}
+                      {result.paragraphs[currentParagraph].reason_biased && (
+                        <div className="sf-para-reason">
+                          <span className="sf-para-tag">Why it’s biased:</span>
+                          <p>
+                            {result.paragraphs[currentParagraph].reason_biased}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
               </div>
             </div>
           )}

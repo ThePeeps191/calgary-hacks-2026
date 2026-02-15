@@ -1,6 +1,6 @@
 import difflib
 
-def highlight_diff(original, edited):
+def html_diff(original, edited):
     orig_words = original.split()
     edit_words = edited.split()
     
@@ -25,4 +25,4 @@ if __name__ == "__main__":
     old_text = "The dog sat on the mat."
     new_text = "The big dog sat on the red rug."
 
-    print(highlight_diff(old_text, new_text))
+    print(html_diff(old_text, new_text))

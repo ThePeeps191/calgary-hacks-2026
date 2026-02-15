@@ -91,66 +91,11 @@ def fetch_audio():
         paragraphs_json = []
         reasons = []
         for para in paragraphs:
-            paragraphs_json.append({
-                "text": para.text,
-                "bias_score": para.is_text_biased_enough,
-                "unbiased_replacement": para.unbiased_replacement,
-                "reason_biased": para.reason_biased
-            })
+            paragraphs_json.append(para.json())
             if para.is_text_biased_enough and para.reason_biased:
                 reasons.append(para.reason_biased)
 
         # Calculate drama index as the bias_score
-        try:
-            bias_score = get_drama_index(text)
-        except Exception:
-            bias_score = None
-
-        return jsonify({
-            "status": "ok",
-            "data": {
-                "text": text,
-                "paragraphs": paragraphs_json,
-                "bias_score": bias_score,
-                "summary": text,
-                "reasons": reasons
-            }
-        }), 200
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-@app.route("/fetch-video", methods=["POST"])
-def fetch_video():
-    if "file" not in request.files:
-        return jsonify({"status": "error", "message": "No file provided"}), 400
-
-    file = request.files["file"]
-    if file.filename == "":
-        return jsonify({"status": "error", "message": "No file selected"}), 400
-
-    filename = file.filename
-    save_path = os.path.join(os.path.dirname(__file__), "user_downloads", filename)
-    file.save(save_path)
-
-    try:
-        # Extract audio from video and transcribe
-        text = media.audio_to_text(filename)
-        if text.startswith("Error:"):
-            return jsonify({"status": "error", "message": text}), 500
-
-        paragraphs = bias.segment_paragraphs(text)
-        paragraphs_json = []
-        reasons = []
-        for para in paragraphs:
-            paragraphs_json.append({
-                "text": para.text,
-                "bias_score": para.is_text_biased_enough,
-                "unbiased_replacement": para.unbiased_replacement,
-                "reason_biased": para.reason_biased
-            })
-            if para.is_text_biased_enough and para.reason_biased:
-                reasons.append(para.reason_biased)
-
         try:
             bias_score = get_drama_index(text)
         except Exception:
