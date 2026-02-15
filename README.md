@@ -81,6 +81,10 @@ calgary-hacks-2026/
 │   ├── __init__.py
 │   └── metrics.py         # Drama index calculation
 │
+├── outlet_bias/            # Media outlet bias lookup
+│   ├── __init__.py
+│   └── outlet_bias.py      # Lookup and rating logic for news outlets
+│
 ├── llm_api/                # LLM integration
 │   ├── __init__.py
 │   └── prompt.py          # Gemini API wrapper with context retention
