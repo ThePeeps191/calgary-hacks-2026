@@ -51,7 +51,7 @@ def fetch_url():
 
     # Calculate drama index as the bias_score
     try:
-        bias_score = metrics.get_drama_index(text)
+        bias_score = get_drama_index(text)
     except Exception:
         bias_score = None
 
@@ -102,7 +102,7 @@ def fetch_audio():
 
         # Calculate drama index as the bias_score
         try:
-            bias_score = metrics.get_drama_index(text)
+            bias_score = get_drama_index(text)
         except Exception:
             bias_score = None
 
