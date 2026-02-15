@@ -12,12 +12,12 @@ model.eval()
 
 EMOTIONS = ["anger", "disgust", "fear", "joy", "neutral", "sadness", "surprise"]
 EMOTION_WEIGHTS = {
-    "anger": 1.4,
-    "disgust": 1.2,
-    "fear": 1.4,
+    "anger": 2,
+    "disgust": 1.6,
+    "fear": 1.5,
     "sadness": 1.2,
-    "surprise": 1.0,
-    "joy": 0.5,
+    "surprise": 1.1,
+    "joy": 0.6,
     "neutral": 0.0
 }
 POWER_WORDS = {
@@ -48,7 +48,7 @@ def narrative_intensity(text): # 0-1
     power = sum(1 for w in words if w.strip(".,!?") in POWER_WORDS)
     absolute = sum(1 for w in words if w.strip(".,!?") in ABSOLUTIST)
 
-    score = (power * 2 + absolute) / n
+    score = 2 * (power * 2 + absolute) / n
     return min(1.0, score * 4)
 
 def get_drama_index(text):
@@ -62,7 +62,7 @@ def get_drama_index(text):
         emotions100[k] = int(emotions[k] * 100)
     emotional = sum(emotions[e] * EMOTION_WEIGHTS[e] for e in emotions) / sum(EMOTION_WEIGHTS.values())
 
-    base = emotional ** 0.6 * 50
+    base = emotional ** 0.6 * 70
     narrative = narrative_intensity(text)
     boosted = base * (1 + narrative)
     capped = min(50, boosted)
