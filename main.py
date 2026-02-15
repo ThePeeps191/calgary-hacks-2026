@@ -8,8 +8,6 @@ import scraper
 app = Flask(__name__)
 CORS(app)
 
-
-
 @app.route("/fetch-url", methods=["POST"])
 def fetch_url():
     data = request.get_json()

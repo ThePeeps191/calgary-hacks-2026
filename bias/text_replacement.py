@@ -1,7 +1,5 @@
-from .bias_detection import get_bias_score
+from .bias_detection import is_text_biased_enough
 from .bias_correction import correct_bias
-
-BIAS_SCORE_CUTOFF = 10.0
 
 def segment_paragraphs(text):
     """
@@ -25,12 +23,12 @@ def segment_paragraphs(text):
 
 class Paragraph:
     text = ""
-    bias_score = 0.0
+    is_text_biased_enough = False
     unbiased_replacement = ""
     reason_biased = ""
     def __init__(self, text):
         self.text = text
     def test_for_bias(self):
-        bias_score = get_bias_score(self.text)
-        if bias_score > BIAS_SCORE_CUTOFF:
+        if is_text_biased_enough(self.text):
+            self.is_text_biased_enough = True
             self.unbiased_replacement, self.reason_biased = correct_bias(self.text)
