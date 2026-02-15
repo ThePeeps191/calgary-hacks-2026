@@ -11,6 +11,7 @@ from metrics import get_drama_index
 from diff import html_diff
 from outlet_bias import NewsOutlet
 from media.yt import download_youtube
+from bias.overall_summary import generate_overall_summary
 
 app = Flask(__name__)
 CORS(app)
@@ -59,14 +60,31 @@ def fetch_url():
         bias_score = drama_result[0] if isinstance(drama_result, list) else drama_result
     except Exception:
         bias_score = None
+    # Generate an overall summary explaining bias and drama reasoning (best-effort)
+    bias_summary = None
+    drama_summary = None
+    try:
+        bias_summary, drama_summary = generate_overall_summary(
+            title=content.get("title", ""),
+            summary_text=content.get("summary", ""),
+            bias_score=bias_score,
+            drama_index=(drama_result[0] if isinstance(drama_result, list) else drama_result) if 'drama_result' in locals() else None,
+            reasons=reasons,
+        )
+    except Exception:
+        pass
 
-
+    # Debug: log what we're returning
+    print(f"DEBUG: bias_summary={bias_summary}")
+    print(f"DEBUG: drama_summary={drama_summary}")
 
     return jsonify({
         "status": "ok",
         "data": {
             "paragraphs": paragraphs_json,
             "bias_score": bias_score,
+            "bias_summary": bias_summary,
+            "drama_summary": drama_summary,
             "title": content.get("title", ""),
             "authors": content.get("authors", []),
             "date": content.get("date", ""),
@@ -133,6 +151,18 @@ def fetch_audio():
         except Exception:
             bias_score = None
 
+        try:
+            bias_summary, drama_summary = generate_overall_summary(
+                title="",
+                summary_text=text,
+                bias_score=bias_score,
+                drama_index=(drama_result[0] if isinstance(drama_result, list) else drama_result) if 'drama_result' in locals() else None,
+                reasons=reasons,
+            )
+        except Exception:
+            bias_summary = None
+            drama_summary = None
+
         return jsonify({
             "status": "ok",
             "data": {
@@ -140,14 +170,13 @@ def fetch_audio():
                 "paragraphs": paragraphs_json,
                 "bias_score": bias_score,
                 "summary": text,
-                "reasons": reasons
+                "reasons": reasons,
+                "bias_summary": bias_summary,
+                "drama_summary": drama_summary,
             }
         }), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
-
-@app.route("/convert-audio", methods=["POST"])
-def convert_audio():
     data = request.get_json()
     filename = data.get("filename")
 
@@ -227,6 +256,18 @@ def fetch_video():
         except Exception:
             bias_score = None
 
+        try:
+            bias_summary, drama_summary = generate_overall_summary(
+                title="",
+                summary_text=text,
+                bias_score=bias_score,
+                drama_index=(drama_result[0] if isinstance(drama_result, list) else drama_result) if 'drama_result' in locals() else None,
+                reasons=reasons,
+            )
+        except Exception:
+            bias_summary = None
+            drama_summary = None
+
         return jsonify({
             "status": "ok",
             "data": {
@@ -234,7 +275,9 @@ def fetch_video():
                 "paragraphs": paragraphs_json,
                 "bias_score": bias_score,
                 "summary": text,
-                "reasons": reasons
+                "reasons": reasons,
+                "bias_summary": bias_summary,
+                "drama_summary": drama_summary,
             }
         }), 200
 
