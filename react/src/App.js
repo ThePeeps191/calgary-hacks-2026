@@ -131,7 +131,7 @@ function App() {
       const data = await response.json();
       setLoading(false);
       if (data.status === "ok") {
-        setResult(data.data);
+        setResult({ summary: data.data.text });
       } else {
         setError(data.message || "Error analyzing audio.");
       }
@@ -428,10 +428,10 @@ function App() {
             </div>
           </div>
 
-          {/* Summary */}
+          {/* Summary / Transcription */}
           {result.summary && (
             <div className="sf-card">
-              <h3 className="sf-card-label">Unbiased Summary</h3>
+              <h3 className="sf-card-label">{activeInput === "audio" ? "Transcribed Text" : "Unbiased Summary"}</h3>
               <p className="sf-summary-text">{result.summary}</p>
             </div>
           )}

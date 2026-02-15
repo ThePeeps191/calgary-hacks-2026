@@ -1,4 +1,5 @@
 # Imports
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -48,6 +49,25 @@ def fetch_url():
         "status": "success",
         "paragraphs": paragraphs_json
     }), 200
+
+@app.route("/fetch-audio", methods=["POST"])
+def fetch_audio():
+    if "file" not in request.files:
+        return jsonify({"status": "error", "message": "No file provided"}), 400
+
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"status": "error", "message": "No file selected"}), 400
+
+    filename = file.filename
+    save_path = os.path.join(os.path.dirname(__file__), "user_downloads", filename)
+    file.save(save_path)
+
+    try:
+        text = media.audio_to_text(filename)
+        return jsonify({"status": "ok", "data": {"text": text}}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route("/convert-audio", methods=["POST"])
 def convert_audio():
