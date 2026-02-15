@@ -12,7 +12,10 @@ def get_content(url):
 
     # Article content
     authors = article.authors
-    date = article.publish_date.strftime("%Y-%m-%d")
+    if article.publish_date.strftime("%Y-%m-%d") is not None:
+        date = article.publish_date.strftime("%Y-%m-%d")
+    else:   
+        date = "No Data"
     text = article.text
     top_image = article.top_image
 
