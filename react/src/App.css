@@ -557,6 +557,29 @@ body {
   background-color: #fff;
 }
 
+/* Why biased button */
+.sf-para-reason-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.sf-para-reason-toggle .sf-btn-sm {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #f97316;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sf-para-reason-toggle .sf-btn-sm:hover {
+  background-color: #ea580c;
+}
+
 /* Bias reason below each paragraph */
 .sf-para-reason {
   margin-bottom: 25px;
