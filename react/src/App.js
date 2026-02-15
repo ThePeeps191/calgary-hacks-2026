@@ -57,6 +57,14 @@ function getBiasStyle(score) {
   return { color: "#dc2626", label: "Extreme Bias", bg: "#fef2f2" };
 }
 
+function getDramaStyle(score) {
+  if (score <= 20) return { color: "#0ea5e9", label: "Calm & Measured", bg: "#f0f9ff", icon: "😐" };
+  if (score <= 40) return { color: "#6366f1", label: "Mildly Dramatic", bg: "#eef2ff", icon: "🤔" };
+  if (score <= 60) return { color: "#f59e0b", label: "Emotionally Charged", bg: "#fffbeb", icon: "😤" };
+  if (score <= 80) return { color: "#ef4444", label: "Highly Dramatic", bg: "#fef2f2", icon: "😡" };
+  return { color: "#7c3aed", label: "Sensationalist", bg: "#f5f3ff", icon: "🔥" };
+}
+
 const HOW_IT_WORKS = [
   {
     icon: "🔗",
@@ -94,12 +102,35 @@ function App() {
   const [audioFile, setAudioFile] = useState(null);
   const [videoFile, setVideoFile] = useState("url");
   const [currentParagraph, setCurrentParagraph] = useState(0);
+  const [dramaIndex, setDramaIndex] = useState(null);
+  const [dramaLoading, setDramaLoading] = useState(false);
+
+  const fetchDramaIndex = async (text) => {
+    if (!text) return;
+    setDramaLoading(true);
+    try {
+      const res = await fetch("http://127.0.0.1:5000/get-drama-index", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const data = await res.json();
+      if (data.status === "success" && data.drama_index != null) {
+        setDramaIndex(data.drama_index);
+      }
+    } catch (_) {
+      // drama index is a bonus — don't surface errors for it
+    } finally {
+      setDramaLoading(false);
+    }
+  };
 
   const handleAnalyze = async () => {
     if (!url.trim()) return;
     setLoading(true);
     setError("");
     setResult(null);
+    setDramaIndex(null);
 
     try {
       const response = await fetch("http://127.0.0.1:5000/fetch-url", {
@@ -112,6 +143,7 @@ function App() {
       setLoading(false);
       if (data.status === "ok") {
         setResult(data.data);
+        fetchDramaIndex(data.data.summary || "");
       } else {
         setError(data.message || "Error fetching content.");
       }
@@ -126,6 +158,7 @@ function App() {
     setLoading(true);
     setError("");
     setResult(null);
+    setDramaIndex(null);
 
     try {
       const formData = new FormData();
@@ -138,6 +171,7 @@ function App() {
       setLoading(false);
       if (data.status === "ok") {
         setResult(data.data);
+        fetchDramaIndex(data.data.text || "");
       } else {
         setError(data.message || "Error analyzing audio.");
       }
@@ -420,6 +454,69 @@ function App() {
               </p>
             )}
           </div>
+
+          {/* Drama Index */}
+          {(dramaIndex != null || dramaLoading) && (
+            <motion.div
+              className="sf-card sf-card-drama"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              style={
+                dramaIndex != null
+                  ? { borderTop: `4px solid ${getDramaStyle(dramaIndex).color}` }
+                  : {}
+              }
+            >
+              <h3 className="sf-card-label">Drama Index</h3>
+              {dramaLoading ? (
+                <div className="sf-drama-loading">
+                  <div className="sf-spinner sf-spinner-sm" />
+                  <span>Calculating emotional intensity…</span>
+                </div>
+              ) : (
+                <>
+                  <div className="sf-bias-row">
+                    <div
+                      className="sf-bias-number"
+                      style={{ color: getDramaStyle(dramaIndex).color }}
+                    >
+                      {dramaIndex}
+                      <span className="sf-bias-denom">/100</span>
+                    </div>
+                    <div className="sf-drama-badge-group">
+                      <span className="sf-drama-icon">{getDramaStyle(dramaIndex).icon}</span>
+                      <div
+                        className="sf-bias-badge"
+                        style={{
+                          background: getDramaStyle(dramaIndex).bg,
+                          color: getDramaStyle(dramaIndex).color,
+                        }}
+                      >
+                        {getDramaStyle(dramaIndex).label}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="sf-bar-track">
+                    <motion.div
+                      className="sf-bar-fill"
+                      style={{ background: getDramaStyle(dramaIndex).color }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${dramaIndex}%` }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                    />
+                  </div>
+                  <div className="sf-bar-scale">
+                    <span>1 — Calm</span>
+                    <span>100 — Sensationalist</span>
+                  </div>
+                  <p className="sf-drama-desc">
+                    Measures emotional intensity and use of manipulative language — independent of political lean.
+                  </p>
+                </>
+              )}
+            </motion.div>
+          )}
 
           {/* Article Info */}
           <div className="sf-card">
