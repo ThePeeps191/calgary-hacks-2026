@@ -126,7 +126,8 @@ function ArcMeter({ score, color }) {
   const [displayCount, setDisplayCount] = useState(0);
 
   const r = 52;
-  const cx = 64, cy = 64;
+  const cx = 64,
+    cy = 64;
   const circumference = 2 * Math.PI * r;
   const arcLength = (270 / 360) * circumference;
   const gapLength = circumference - arcLength;
@@ -148,7 +149,9 @@ function ArcMeter({ score, color }) {
       <svg width="148" height="148" viewBox="0 0 128 128">
         {/* Gray background arc */}
         <circle
-          cx={cx} cy={cy} r={r}
+          cx={cx}
+          cy={cy}
+          r={r}
           fill="none"
           stroke="#e2e8f0"
           strokeWidth="11"
@@ -158,19 +161,25 @@ function ArcMeter({ score, color }) {
         />
         {/* Colored fill arc — grow the dash from 0 to targetColored */}
         <motion.circle
-          cx={cx} cy={cy} r={r}
+          cx={cx}
+          cy={cy}
+          r={r}
           fill="none"
           stroke={color}
           strokeWidth="11"
           strokeLinecap="round"
           transform={`rotate(-225, ${cx}, ${cy})`}
           initial={{ strokeDasharray: `0 ${circumference}` }}
-          animate={{ strokeDasharray: `${targetColored} ${circumference - targetColored}` }}
+          animate={{
+            strokeDasharray: `${targetColored} ${circumference - targetColored}`,
+          }}
           transition={{ duration: 1.2, ease: "easeOut" }}
         />
       </svg>
       <div className="sf-arc-center">
-        <span className="sf-arc-number" style={{ color }}>{displayCount}</span>
+        <span className="sf-arc-number" style={{ color }}>
+          {displayCount}
+        </span>
         <span className="sf-arc-denom">/100</span>
       </div>
     </div>
@@ -585,7 +594,10 @@ function App() {
                 </div>
               ) : (
                 <>
-                  <ArcMeter score={dramaIndex} color={getDramaStyle(dramaIndex).color} />
+                  <ArcMeter
+                    score={dramaIndex}
+                    color={getDramaStyle(dramaIndex).color}
+                  />
                   <div className="sf-bias-badge-row">
                     <div className="sf-drama-badge-group">
                       <span className="sf-drama-icon">
@@ -792,7 +804,9 @@ function App() {
                                 }))
                               }
                             >
-                              {openReasons[idx] ? "Hide reason" : "Why biased"}
+                              {openReasons[idx]
+                                ? "Hide reason"
+                                : "Biased Reason"}
                             </button>
                           </div>
                         )}
