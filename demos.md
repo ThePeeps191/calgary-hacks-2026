@@ -2,7 +2,7 @@
 
 ## Articles
 - https://www.bbc.com/news/articles/cy5p7xv4zeyo (very unbiased)
-- https://www.cnn.com/2026/02/15/us/ice-shooting-dhs-doj-false-statements (somewhat biased, high emotion)
+- https://www.cnn.com/2026/02/15/us/ice-shooting-dhs-doj-false-statements (somewhat biased, high emotion), demonstrate news outlet bias
 - https://theonion.com/finnish-ski-jumping-team-caught-tampering-with-earths-gravitational-field/ (satirical, very high bias, no factual information)
 
 ## Audio
