@@ -28,7 +28,7 @@ def audio_to_text(filename):
         
         # Gemini punctuation
         chat = Prompt()
-        punctuated_text = chat.prompt(f"Add proper punctuation to this text without changing the words. The text was extracted from an audio so there is a slight possbility that some words were heard wrong. In that case, do change them: {raw_text}")
+        punctuated_text = chat.prompt(f"Add proper punctuation to this text without changing the words. The text was extracted from an audio so there is a slight possbility that some words were heard wrong. In that case, do change any wrong words: {raw_text}")
         
         if os.path.exists(wav_path):
             os.remove(wav_path)
