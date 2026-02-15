@@ -624,6 +624,42 @@ body {
   font-weight: 500;
 }
 
+/* ── Arc meter ── */
+.sf-arc-container {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  margin: 12px auto 8px;
+}
+
+.sf-arc-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.sf-arc-number {
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.sf-arc-denom {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.sf-bias-badge-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
 /* ── Drama Index card ── */
 .sf-drama-badge-group {
   display: flex;

@@ -1,6 +1,6 @@
 import "./App.css";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, animate } from "framer-motion";
 
 /* ── Background floating paths ── */
 function FloatingPaths({ position }) {
@@ -120,6 +120,62 @@ const INPUT_TABS = [
   { id: "audio", label: "🎙 Audio" },
   { id: "video", label: "🎬 Video" },
 ];
+
+/* ── Arc Gauge Meter ── */
+function ArcMeter({ score, color }) {
+  const [displayCount, setDisplayCount] = useState(0);
+
+  const r = 52;
+  const cx = 64, cy = 64;
+  const circumference = 2 * Math.PI * r;
+  const arcLength = (270 / 360) * circumference;
+  const gapLength = circumference - arcLength;
+
+  useEffect(() => {
+    setDisplayCount(0);
+    const controls = animate(0, score, {
+      duration: 1.2,
+      ease: "easeOut",
+      onUpdate: (v) => setDisplayCount(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [score]);
+
+  const targetColored = arcLength * (score / 100);
+
+  return (
+    <div className="sf-arc-container">
+      <svg width="148" height="148" viewBox="0 0 128 128">
+        {/* Gray background arc */}
+        <circle
+          cx={cx} cy={cy} r={r}
+          fill="none"
+          stroke="#e2e8f0"
+          strokeWidth="11"
+          strokeDasharray={`${arcLength} ${gapLength}`}
+          strokeLinecap="round"
+          transform={`rotate(-225, ${cx}, ${cy})`}
+        />
+        {/* Colored fill arc — grow the dash from 0 to targetColored */}
+        <motion.circle
+          cx={cx} cy={cy} r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth="11"
+          strokeLinecap="round"
+          transform={`rotate(-225, ${cx}, ${cy})`}
+          initial={{ strokeDasharray: `0 ${circumference}` }}
+          animate={{ strokeDasharray: `${targetColored} ${circumference - targetColored}` }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+        />
+      </svg>
+      <div className="sf-arc-center">
+        <span className="sf-arc-number" style={{ color }}>{displayCount}</span>
+        <span className="sf-arc-denom">/100</span>
+      </div>
+    </div>
+  );
+}
 
 /* ── Main App ── */
 function App() {
@@ -485,29 +541,14 @@ function App() {
             <h3 className="sf-card-label">Bias Score</h3>
             {biasStyle ? (
               <>
-                <div className="sf-bias-row">
-                  <div
-                    className="sf-bias-number"
-                    style={{ color: biasStyle.color }}
-                  >
-                    {biasScore}
-                    <span className="sf-bias-denom">/100</span>
-                  </div>
+                <ArcMeter score={biasScore} color="#16a34a" />
+                <div className="sf-bias-badge-row">
                   <div
                     className="sf-bias-badge"
                     style={{ background: biasStyle.bg, color: biasStyle.color }}
                   >
                     {biasStyle.label}
                   </div>
-                </div>
-                <div className="sf-bar-track">
-                  <motion.div
-                    className="sf-bar-fill"
-                    style={{ background: biasStyle.color }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${biasScore}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                  />
                 </div>
                 <div className="sf-bar-scale">
                   <span>0 — Unbiased</span>
@@ -544,14 +585,8 @@ function App() {
                 </div>
               ) : (
                 <>
-                  <div className="sf-bias-row">
-                    <div
-                      className="sf-bias-number"
-                      style={{ color: getDramaStyle(dramaIndex).color }}
-                    >
-                      {dramaIndex}
-                      <span className="sf-bias-denom">/100</span>
-                    </div>
+                  <ArcMeter score={dramaIndex} color={getDramaStyle(dramaIndex).color} />
+                  <div className="sf-bias-badge-row">
                     <div className="sf-drama-badge-group">
                       <span className="sf-drama-icon">
                         {getDramaStyle(dramaIndex).icon}
@@ -566,15 +601,6 @@ function App() {
                         {getDramaStyle(dramaIndex).label}
                       </div>
                     </div>
-                  </div>
-                  <div className="sf-bar-track">
-                    <motion.div
-                      className="sf-bar-fill"
-                      style={{ background: getDramaStyle(dramaIndex).color }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${dramaIndex}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                    />
                   </div>
                   <div className="sf-bar-scale">
                     <span>1 — Calm</span>

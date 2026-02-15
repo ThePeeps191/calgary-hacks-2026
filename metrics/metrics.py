@@ -66,7 +66,7 @@ def get_drama_index(text):
     narrative = narrative_intensity(text)
     boosted = base * (1 + narrative)
     capped = min(50, boosted)
-    final = int(round(capped * 2))
+    final = int(round(capped * 1.2))
 
     return [min(100, max(1, min(100, final)) * 2), emotions100]
 
