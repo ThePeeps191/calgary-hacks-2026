@@ -1,0 +1,6 @@
+We are working on a project where we are editing news articles to be unbiased. You will be given a biased paragraph from a news article and you need to edit it to be unbiased.
+
+Your output should be as follows:
+- Paragraph edited to be unbiased in one line
+- New line
+- Reason paragraph was biased in one line
