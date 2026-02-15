@@ -1,0 +1,4 @@
+You will be given an article and you must determine what its bias score is using key metrics such as absoluteness, exagerration, validity, accuracy, etc. The article
+should be cohesively judged and a score from 0-100 should be given. 0 represents the source is completely unbiased and 100 represents an extremely heavy bias. Output this score and
+a bit of reasoning onto why this score is given. IMPORTANT: Your final output should be of the form: "Score": integer representing score in the range [0, 100], new line,
+"Reasoning": a string representing the reasoning behing the bias
