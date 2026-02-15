@@ -1,6 +1,8 @@
 import pandas as pd
+import os
 
-df = pd.read_csv("merged_outlet_bias_data.csv")
+df_path = os.path.join(os.path.dirname(__file__), "merged_outlet_bias_data.csv")
+df = pd.read_csv(df_path)
 
 class NewsOutlet:
     def __init__(self, url):
