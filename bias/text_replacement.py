@@ -1,11 +1,9 @@
-from .bias_detection import get_bias_score
+from .bias_detection import is_text_biased_enough
 from .bias_correction import correct_bias
-
-BIAS_SCORE_CUTOFF = 10.0
 
 def segment_paragraphs(text):
     """
-    Segments article text into Paragraph objects.
+    Segments article text into Paragraph objects, then tests each for bias.
     Splits by newlines (paragraph breaks).
     """
     paragraphs = []
@@ -19,18 +17,27 @@ def segment_paragraphs(text):
         
         # Skip empty paragraphs
         if para_text:
-            paragraphs.append(Paragraph(para_text))
+            paragraph = Paragraph(para_text)
+            paragraph.test_for_bias()
+            paragraphs.append(paragraph)
     
     return paragraphs
 
 class Paragraph:
     text = ""
-    bias_score = 0.0
+    is_text_biased_enough = False
     unbiased_replacement = ""
     reason_biased = ""
     def __init__(self, text):
         self.text = text
     def test_for_bias(self):
-        bias_score = get_bias_score(self.text)
-        if bias_score > BIAS_SCORE_CUTOFF:
+        if is_text_biased_enough(self.text):
+            self.is_text_biased_enough = True
             self.unbiased_replacement, self.reason_biased = correct_bias(self.text)
+    def json(self):
+        return {
+            "text": self.text,
+            "is_text_biased_enough": self.is_text_biased_enough,
+            "unbiased_replacement": self.unbiased_replacement,
+            "reason_biased": self.reason_biased
+        }

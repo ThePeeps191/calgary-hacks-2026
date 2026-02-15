@@ -1,2 +1,2 @@
-def get_bias_score(text):
-    return 0.0
+def is_text_biased_enough(text):
+    return True

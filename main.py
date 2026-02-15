@@ -8,8 +8,6 @@ import scraper
 app = Flask(__name__)
 CORS(app)
 
-
-
 @app.route("/fetch-url", methods=["POST"])
 def fetch_url():
     data = request.get_json()
@@ -23,15 +21,13 @@ def fetch_url():
     
     try:
         content = scraper.get_content(url)
-        return jsonify({
-            "status": "ok",
-            "data": content
-        })
     except Exception as e:
         return jsonify({
             "status": "error",
             "message": str(e)
         }), 500
+    
+    text = content['text']
 
 if __name__ == "__main__":
     app.run(debug = True, port = 5000)
