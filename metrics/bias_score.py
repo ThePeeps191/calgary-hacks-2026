@@ -2,7 +2,7 @@ from llm_api import Prompt
 import os
 
 # Read the system prompt from file
-prompt_file_path = os.path.join(os.path.dirname(__file__), "bias_score.txt")
+prompt_file_path = os.path.join(os.path.dirname(__file__), "bias_score_prompt.txt")
 with open(prompt_file_path, "r") as f:
     SYSTEM_PROMPT = f.read()
 
