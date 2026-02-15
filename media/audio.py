@@ -1,6 +1,8 @@
 import speech_recognition as sr
 from pydub import AudioSegment
 import os
+import gc
+import time
 from llm_api import Prompt
 
 print("media audio.py imports finished")
@@ -18,19 +20,25 @@ def audio_to_text(filename):
         
         # Check if file is already WAV
         is_already_wav = audio_path.lower().endswith('.wav')
+        wav_path = audio_path
         
         if not is_already_wav:
             # Convert audio to WAV
             audio = AudioSegment.from_file(audio_path)
             wav_path = audio_path.replace(os.path.splitext(audio_path)[1], ".wav")
             audio.export(wav_path, format="wav")
-        else:
-            wav_path = audio_path
+            # Force garbage collection to release file handles
+            del audio
+            gc.collect()
+            time.sleep(0.5)
         
         # Read text
         with sr.AudioFile(wav_path) as source:
             audio_data = recognizer.record(source)
             raw_text = recognizer.recognize_google(audio_data)
+        
+        # Force garbage collection after reading
+        gc.collect()
         
         # Gemini punctuation
         chat = Prompt()
@@ -38,7 +46,11 @@ def audio_to_text(filename):
         
         # Only delete if we created a new WAV file (not the original)
         if not is_already_wav and os.path.exists(wav_path):
-            os.remove(wav_path)
+            try:
+                time.sleep(0.2)
+                os.remove(wav_path)
+            except Exception:
+                pass  # Ignore if file is still in use
         
         return punctuated_text
         # return raw_text
