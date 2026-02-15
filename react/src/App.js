@@ -193,6 +193,7 @@ function App() {
   const [similarOpen, setSimilarOpen] = useState(false);
   const [similarArticles, setSimilarArticles] = useState(null);
   const [similarLoading, setSimilarLoading] = useState(false);
+  const [openReasons, setOpenReasons] = useState({});
 
   const fetchDramaIndex = async (text) => {
     if (!text) return;
@@ -220,7 +221,10 @@ function App() {
     if (similarArticles) return; // already fetched
     setSimilarLoading(true);
     try {
-      const query = result?.keywords?.slice(0, 3).join(" ") || result?.summary?.split(" ").slice(0, 6).join(" ") || "";
+      const query =
+        result?.keywords?.slice(0, 3).join(" ") ||
+        result?.summary?.split(" ").slice(0, 6).join(" ") ||
+        "";
       const res = await fetch("http://127.0.0.1:5000/search-similar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -256,7 +260,6 @@ function App() {
         body: JSON.stringify({ url }),
       });
       const data = await response.json();
-      console.log("Backend response:", data);
       setLoading(false);
       if (data.status === "ok") {
         setResult(data.data);
@@ -313,7 +316,6 @@ function App() {
       });
 
       const data = await response.json();
-      console.log("Backend response:", data);
 
       setLoading(false);
 
@@ -671,6 +673,61 @@ function App() {
             </div>
           </div>
 
+          {/* Analysis Summary (Bias & Drama Reasons) */}
+          {(() => {
+            console.log("Result object:", result);
+            console.log("Bias summary:", result?.bias_summary);
+            console.log("Drama summary:", result?.drama_summary);
+            return (
+              <div className="sf-card sf-card-analysis-summary">
+                <h3 className="sf-card-label">Analysis Summary</h3>
+                <div className="sf-analysis-summary-grid">
+                  {/* Bias Section */}
+                  <div className="sf-analysis-item">
+                    <div className="sf-analysis-label">Bias</div>
+                    <div
+                      className="sf-analysis-score"
+                      style={biasStyle ? { color: biasStyle.color } : {}}
+                    >
+                      {biasScore !== undefined ? biasScore : "N/A"}
+                    </div>
+                    <div className="sf-analysis-reason">
+                      {result?.bias_summary && result.bias_summary.trim()
+                        ? result.bias_summary
+                        : biasStyle
+                          ? biasStyle.label
+                          : "Pending analysis..."}
+                    </div>
+                  </div>
+
+                  {/* Drama Section */}
+                  <div className="sf-analysis-item">
+                    <div className="sf-analysis-label">Drama</div>
+                    <div
+                      className="sf-analysis-score"
+                      style={
+                        dramaIndex != null
+                          ? { color: getDramaStyle(dramaIndex).color }
+                          : {}
+                      }
+                    >
+                      {dramaIndex != null ? dramaIndex : "N/A"}
+                    </div>
+                    <div className="sf-analysis-reason">
+                      {result?.drama_summary && result.drama_summary.trim()
+                        ? result.drama_summary
+                        : dramaIndex != null
+                          ? getDramaStyle(dramaIndex).label
+                          : dramaLoading
+                            ? "Calculating..."
+                            : "Pending analysis..."}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Summary / Transcription */}
           {result.summary && (
             <div className="sf-card">
@@ -683,24 +740,7 @@ function App() {
             </div>
           )}
 
-          {/* Bias Reasons */}
-          {result.reasons?.length > 0 && (
-            <div className="sf-card">
-              <h3 className="sf-card-label">Why It's Biased</h3>
-              <ul className="sf-reasons-list">
-                {result.reasons.map((reason, i) => (
-                  <motion.li
-                    key={i}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.08 }}
-                  >
-                    {reason}
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* Note: per-paragraph bias reasons are shown inline below. */}
 
           {/* Paragraph‑level Bias Analysis */}
           {result.paragraphs?.length > 0 && (
@@ -731,17 +771,43 @@ function App() {
 
                       {/* Unbiased paragraph */}
                       <div className="sf-para-unbiased">
-                        <p>{para.unbiased_replacement || para.text}</p>
+                        {!para.unbiased_replacement ||
+                        para.unbiased_replacement.trim() ===
+                          para.text.trim() ? (
+                          <p>
+                            <em>Unchanged</em>
+                          </p>
+                        ) : (
+                          <p>{para.unbiased_replacement}</p>
+                        )}
+
+                        {para.bias_score && para.reason_biased && (
+                          <div className="sf-para-reason-toggle">
+                            <button
+                              className="sf-btn sf-btn-sm"
+                              onClick={() =>
+                                setOpenReasons((prev) => ({
+                                  ...prev,
+                                  [idx]: !prev[idx],
+                                }))
+                              }
+                            >
+                              {openReasons[idx] ? "Hide reason" : "Why biased"}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* Bias reason below the paragraph */}
-                    {para.bias_score && para.reason_biased && (
-                      <div className="sf-para-reason">
-                        <span className="sf-para-tag">Reason for bias:</span>
-                        <p>{para.reason_biased}</p>
-                      </div>
-                    )}
+                    {/* Inline reason panel (toggled) */}
+                    {para.bias_score &&
+                      para.reason_biased &&
+                      openReasons[idx] && (
+                        <div className="sf-para-reason">
+                          <span className="sf-para-tag">Reason for bias:</span>
+                          <p>{para.reason_biased}</p>
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>
@@ -786,7 +852,12 @@ function App() {
             >
               <div className="sf-similar-header">
                 <h3 className="sf-similar-title">Similar Articles</h3>
-                <button className="sf-similar-close" onClick={() => setSimilarOpen(false)}>✕</button>
+                <button
+                  className="sf-similar-close"
+                  onClick={() => setSimilarOpen(false)}
+                >
+                  ✕
+                </button>
               </div>
 
               {similarLoading ? (
@@ -810,12 +881,25 @@ function App() {
                         rel="noopener noreferrer"
                         className="sf-similar-link"
                       >
-                        <span className="sf-similar-article-title">{article.title}</span>
+                        <span className="sf-similar-article-title">
+                          {article.title}
+                        </span>
                         <div className="sf-similar-meta">
-                          {article.source?.name && <span className="sf-similar-source">{article.source.name}</span>}
+                          {article.source?.name && (
+                            <span className="sf-similar-source">
+                              {article.source.name}
+                            </span>
+                          )}
                           {article.publishedAt && (
                             <span className="sf-similar-date">
-                              {new Date(article.publishedAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                              {new Date(article.publishedAt).toLocaleDateString(
+                                undefined,
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                },
+                              )}
                             </span>
                           )}
                         </div>
