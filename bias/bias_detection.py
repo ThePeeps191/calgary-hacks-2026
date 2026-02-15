@@ -7,7 +7,7 @@ with open(prompt_file_path, "r") as f:
     SYSTEM_PROMPT = f.read()
 
 # Initialize the Prompt API with system prompt
-chat = Prompt(system_prompt=SYSTEM_PROMPT)
+chat = Prompt(system_message=SYSTEM_PROMPT)
 
 def is_text_biased_enough(text):
     """
