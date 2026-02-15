@@ -1,0 +1,46 @@
+import speech_recognition as sr
+from pydub import AudioSegment
+import os
+from llm_api import Prompt
+
+print("media audio.py imports finished")
+
+def audio_to_text(filename):
+    # Build the file path
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    audio_path = os.path.join(project_root, "user_downloads", filename)
+    
+    if not os.path.exists(audio_path):
+        return f"Error: File not found at {audio_path}"
+    
+    try:
+        recognizer = sr.Recognizer()
+        
+        # Convert audio to WAV
+        audio = AudioSegment.from_file(audio_path)
+        wav_path = audio_path.replace(os.path.splitext(audio_path)[1], ".wav")
+        audio.export(wav_path, format="wav")
+        
+        # Read text
+        with sr.AudioFile(wav_path) as source:
+            audio_data = recognizer.record(source)
+            raw_text = recognizer.recognize_google(audio_data)
+        
+        # Gemini punctuation
+        chat = Prompt()
+        punctuated_text = chat.prompt(f"Add proper punctuation to this text without changing the words. The text was extracted from an audio so there is a slight possbility that some words were heard wrong. In that case, do change them: {raw_text}")
+        
+        if os.path.exists(wav_path):
+            os.remove(wav_path)
+        
+        return punctuated_text
+        # return raw_text
+    
+    except sr.UnknownValueError:
+        return "Error: Could not understand audio"
+    except sr.RequestError as e:
+        return f"Error: {e}"
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+print(audio_to_text("test_audio.m4a"))
