@@ -8,21 +8,26 @@
   --text: #1e293b;
   --text-muted: #64748b;
   --border: #e2e8f0;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.12), 0 4px 6px -4px rgba(0,0,0,0.08);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
   --radius: 14px;
 }
 
 /* ── Reset ── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
@@ -143,7 +148,9 @@ body {
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s;
+  transition:
+    background 0.18s,
+    color 0.18s;
 }
 
 .sf-tab:hover:not(.sf-tab-active) {
@@ -234,7 +241,9 @@ body {
   font-size: 0.98rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.18s, transform 0.1s;
+  transition:
+    background 0.18s,
+    transform 0.1s;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -345,7 +354,9 @@ body {
 }
 
 @keyframes sf-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .sf-loading p {
@@ -492,6 +503,27 @@ body {
   font-size: 0.92rem;
   color: var(--text);
   line-height: 1.55;
+}
+
+.sf-para-diff .inserted {
+  background-color: #d4f8c4;
+  color: #2d6a2d;
+}
+
+.sf-para-diff .deleted {
+  background-color: #f8d4d4;
+  color: #a61b1b;
+  text-decoration: line-through;
+}
+
+.sf-all-reasons {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ccc;
+}
+
+.sf-para-details-bottom {
+  margin-bottom: 1.5rem;
 }
 
 /* ── Keywords ── */

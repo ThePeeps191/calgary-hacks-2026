@@ -93,7 +93,6 @@ function App() {
   const [activeInput, setActiveInput] = useState("url");
   const [audioFile, setAudioFile] = useState(null);
   const [videoFile, setVideoFile] = useState("url");
-  const [currentParagraph, setCurrentParagraph] = useState(0);
 
   const handleAnalyze = async () => {
     if (!url.trim()) return;
@@ -478,123 +477,58 @@ function App() {
             </div>
           )}
 
-          {/* Paragraph-level Bias Analysis }
-          {result.paragraphs?.length > 0 && (
-            <div className="sf-card">
-              <h3 className="sf-card-label">Paragraph Analysis</h3>
-              <div className="sf-paragraphs">
-                {result.paragraphs.map((para, i) => (
-                  <motion.div
-                    key={i}
-                    className={`sf-para ${para.bias_score ? "sf-para-biased" : "sf-para-clean"}`}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <p className="sf-para-text">{para.text}</p>
-                    {para.bias_score && (
-                      <div className="sf-para-details">
-                        {para.unbiased_replacement && (
-                          <div className="sf-para-replacement">
-                            <span className="sf-para-tag">
-                              Unbiased version:
-                            </span>
-                            <p>{para.unbiased_replacement}</p>
-                          </div>
-                        )}
-                        {para.reason_biased && (
-                          <div className="sf-para-reason">
-                            <span className="sf-para-tag">
-                              Why it's biased:
-                            </span>
-                            <p>{para.reason_biased}</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          )*/}
-
           {/* Paragraph‑level Bias Analysis */}
           {result.paragraphs?.length > 0 && (
             <div className="sf-card">
               <h3 className="sf-card-label">Paragraph Analysis</h3>
 
-              <div className="sf-paragraph-viewer">
-                {/* navigation buttons */}
-                <div className="sf-nav-buttons">
-                  <button
-                    className="sf-btn"
-                    onClick={() =>
-                      setCurrentParagraph(
-                        (currentParagraph - 1 + result.paragraphs.length) %
-                          result.paragraphs.length,
-                      )
-                    }
+              <div className="sf-paragraphs-full">
+                {/* Loop through all paragraphs and show diff HTML for each */}
+                {result.paragraphs.map((para, idx) => (
+                  <div
+                    key={idx}
+                    className={`sf-para ${
+                      para.bias_score ? "sf-para-biased" : "sf-para-clean"
+                    }`}
                   >
-                    Previous
-                  </button>
+                    <div
+                      className="sf-para-diff"
+                      dangerouslySetInnerHTML={{ __html: para.differences }}
+                    />
+                  </div>
+                ))}
 
-                  <span className="sf-nav-index">
-                    {currentParagraph + 1} / {result.paragraphs.length}
-                  </span>
+                {/* At the BOTTOM: show all reasons and unbiased versions */}
+                <div className="sf-all-reasons">
+                  <h4 className="sf-reasons-title">
+                    Bias Summaries & Suggestions
+                  </h4>
 
-                  <button
-                    className="sf-btn"
-                    onClick={() =>
-                      setCurrentParagraph(
-                        (currentParagraph + 1) % result.paragraphs.length,
-                      )
-                    }
-                  >
-                    Next
-                  </button>
-                </div>
+                  {result.paragraphs.map(
+                    (para, idx) =>
+                      para.bias_score && (
+                        <div key={idx} className="sf-para-details-bottom">
+                          {para.reason_biased && (
+                            <div className="sf-para-reason-bottom">
+                              <span className="sf-para-tag">
+                                Reason for bias:
+                              </span>
+                              <p>{para.reason_biased}</p>
+                            </div>
+                          )}
 
-                {/* animated paragraph display */}
-                <motion.div
-                  key={currentParagraph}
-                  className={`sf-para ${
-                    result.paragraphs[currentParagraph].bias_score
-                      ? "sf-para-biased"
-                      : "sf-para-clean"
-                  }`}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="sf-para-text">
-                    {result.paragraphs[currentParagraph].text}
-                  </p>
-
-                  {result.paragraphs[currentParagraph].bias_score && (
-                    <div className="sf-para-details">
-                      {result.paragraphs[currentParagraph]
-                        .unbiased_replacement && (
-                        <div className="sf-para-replacement">
-                          <span className="sf-para-tag">Unbiased version:</span>
-                          <p>
-                            {
-                              result.paragraphs[currentParagraph]
-                                .unbiased_replacement
-                            }
-                          </p>
+                          {para.unbiased_replacement && (
+                            <div className="sf-para-unbiased-bottom">
+                              <span className="sf-para-tag">
+                                Unbiased version:
+                              </span>
+                              <p>{para.unbiased_replacement}</p>
+                            </div>
+                          )}
                         </div>
-                      )}
-                      {result.paragraphs[currentParagraph].reason_biased && (
-                        <div className="sf-para-reason">
-                          <span className="sf-para-tag">Why it’s biased:</span>
-                          <p>
-                            {result.paragraphs[currentParagraph].reason_biased}
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                      ),
                   )}
-                </motion.div>
+                </div>
               </div>
             </div>
           )}
