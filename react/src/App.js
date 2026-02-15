@@ -116,7 +116,7 @@ function App() {
       });
       const data = await res.json();
       if (data.status === "success" && data.drama_index != null) {
-        setDramaIndex(data.drama_index);
+        setDramaIndex(data.drama_index[0]);
       }
     } catch (_) {
       // drama index is a bonus — don't surface errors for it

@@ -52,7 +52,8 @@ def fetch_url():
 
     # Calculate drama index as the bias_score
     try:
-        bias_score = get_drama_index(text)
+        drama_result = get_drama_index(text)
+        bias_score = drama_result[0] if isinstance(drama_result, list) else drama_result
     except Exception:
         bias_score = None
 
@@ -121,7 +122,8 @@ def fetch_audio():
 
         # Calculate drama index as the bias_score
         try:
-            bias_score = get_drama_index(text)
+            drama_result = get_drama_index(text)
+            bias_score = drama_result[0] if isinstance(drama_result, list) else drama_result
         except Exception:
             bias_score = None
 
@@ -261,7 +263,11 @@ def get_drama_index_route():
         }), 400
     
     try:
-        drama_index = get_drama_index(text)
+        drama_result = get_drama_index(text)
+        if isinstance(drama_result, list):
+            drama_index = [drama_result[0], drama_result[1]]
+        else:
+            drama_index = [drama_result, {}]
         return jsonify({
             "status": "success",
             "drama_index": drama_index
