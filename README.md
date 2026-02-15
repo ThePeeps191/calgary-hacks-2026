@@ -6,7 +6,7 @@ SpinFilter analyzes articles, audio, and text content to identify political bias
 
 ---
 
-## 🎯 Features
+## Features
 
 - **URL Content Scraping**: Extract and analyze news articles from any URL
 - **Audio Transcription**: Convert audio files (MP3, M4A, WAV) to text with automatic punctuation correction
@@ -18,7 +18,7 @@ SpinFilter analyzes articles, audio, and text content to identify political bias
 
 ---
 
-## 🛠 Technology Stack
+## Technology Stack
 
 ### Backend
 - **Flask** - REST API framework
@@ -41,7 +41,7 @@ SpinFilter analyzes articles, audio, and text content to identify political bias
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 calgary-hacks-2026/
